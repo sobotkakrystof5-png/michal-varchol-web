@@ -1,0 +1,9 @@
+{
+  "name": "varchol-malir-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Prezentacni web - Michal Varchol, Malirske prace Litomerice",
+  "dependencies": {
+    "resend": "^6.19.0"
+  }
+}
