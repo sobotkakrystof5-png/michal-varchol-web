@@ -24,7 +24,7 @@ Toto pravidlo převažuje nad vším ostatním v tomto dokumentu. Před dokonče
 
 - Nikdy nevymýšlet: rok založení firmy, IČO/DIČ, počty klientů/let praxe, ceny — pokud klient neuvedl, nechat jasně označený placeholder nebo se zeptat.
 - Zdrojový text o firmě (brief sekce 1) se smí stylisticky přeformulovat, ale fakta se nesmí zkreslit ani doplnit.
-- Známé mezery (vědomě, neopravovat jako bug, dokud klient nedodá): žádné reálné fotky, žádné logo (jen textový wordmark), žádný rok založení, žádné IČO/DIČ.
+- Známé mezery (vědomě, neopravovat jako bug, dokud klient nedodá): žádné logo (jen textový wordmark), žádný rok založení, žádné IČO/DIČ. (Reálné fotky klient dodal 2026-08-17 — hero, O mně i galerie teď používají skutečné fotografie, viz sekce 5 a `memory.md`.)
 
 ## 2. Tech stack a architektura (neměnná rozhodnutí)
 
@@ -63,12 +63,15 @@ Reference: `.claude/Antos-simple-site-skill.md` (jednostránková řemeslnická 
 
 **Konvence:** přesně jeden primární (filled) a jeden sekundární (outline) CTA styl v celé stránce, žádná další variace. Žádné dropdowny/utility bar/search v navigaci. Žádný číslovaný "index" motiv.
 
-## 5. Foto-placeholdery
+## 5. Foto-placeholdery a reálné fotky
 
-- Dokud klient nedodá fotky: žádné stock/externí fotky jako výplň.
-- Každý placeholder = jasně vizuálně odlišený rámeček (přerušovaný okraj, neutrální pozadí, ikona fotoaparátu, popisek co tam patří), s finálním `aspect-ratio` nastaveným předem (aby se layout neposunul po vložení reálných fotek).
-- Počty: 1× hero, 1× O mně, min. 6× galerie (rozděleno mezi 3 kategorie filtru).
-- `alt` texty i na placeholderech, popisné, připravené na budoucí náhradu.
+- Dokud klient nedodá fotky pro nový slot: žádné stock/externí fotky jako výplň, jen prázdný placeholder (přerušovaný okraj, neutrální pozadí, ikona fotoaparátu, popisek co tam patří), s finálním `aspect-ratio` nastaveným předem.
+- **Od 2026-08-17 jsou všechny fotoslot na stránce obsazené reálnými fotkami klienta** (1× hero, 1× O mně, 11× galerie) — prázdný stav `.photo-placeholder` (bez `--filled`) se aktuálně nikde na stránce nepoužívá, ale zůstává v CSS jako připravený vzor pro jakýkoli budoucí nový fotoslot bez fotky (např. nová sekce).
+- Zaplněný placeholder = modifier `.photo-placeholder--filled` na stejném `<figure class="photo-placeholder photo-placeholder--{varianta}">` — nahrazuje ikonu+figcaption za `<img>` vyplňující rámeček (`object-fit:cover`), masking-tape rohy zůstávají (kromě hero, kde je fotka full-bleed bez rámečku).
+- Aspect-ratio: hero `21/9` (desktop) s `object-position` doladěným na konkrétní fotku, O mně `4/5`, galerie `3/4` (změněno z původního `4/3` — reálné fotky od klienta jsou většinou na výšku, `3/4` sedí mnohem líp a ořeže minimum).
+- Galerie: aktuálně 11 fotek, všechny zobrazené najednou (žádné tlačítko "Zobrazit více/méně" — bylo odstraněno, viz `memory.md`). Filtr Interiéry/Fasády/Průmyslové haly zůstává funkční přes `data-category`, i když rozdělení mezi kategoriemi není a nemusí být rovnoměrné (odráží to, co klient reálně dodal).
+- Každá galerijní fotka má `data-caption` (1 věta popisující, co je na fotce vidět — zobrazí se v lightboxu po rozkliknutí) a `alt` (kratší, doslovnější popis pro čtečky). Lightbox teď zobrazuje fotku v původním poměru stran beze zkreslení (žádný vynucený `aspect-ratio`, jen `max-height:70vh`), ne oříznutou verzi z gridu.
+- Nové/nahrazené fotky vždy zpracovat přes `sips` (macOS) do optimalizovaného JPEG (kvalita ~82) místo použití zdrojového PNG přímo — viz `memory.md` záznam 2026-08-17 pro konkrétní úsporu (~80 %).
 
 ## 6. Kontaktní formulář — funkční požadavky
 

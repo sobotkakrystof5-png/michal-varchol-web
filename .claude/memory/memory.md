@@ -136,3 +136,97 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `assets/css/style.css` (upraven — 3 cílené změny v hero/responsive sekci, viz výše)
 
 ---
+
+## 2026-08-17 — Doplnění IČO
+
+**Fáze projektu po této session:** Beze změny (first-draft implementace), jedna z otevřených klientských mezer teď částečně vyplněná.
+
+**Co bylo uděláno:**
+- Klient dodal IČO (05850100), DIČ zatím ne. Nahrazeny oba placeholdery "doplní klient" pro IČO v `index.html` (sekce Kontakt a patička) reálnou hodnotou.
+
+**Rozhodnutí a proč:**
+- DIČ v obou místech vypuštěno (ne ponecháno jako placeholder) — uživatel explicitně řekl "na DIČ se zatím vykašli", takže dokud nebude dodáno, na stránce se nezobrazuje vůbec (menší regulatorní expozice než vystavený "doplní klient" text). Label v kontakt-listu změněn z "IČO / DIČ" na jen "IČO".
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- DIČ stále chybí (nově upřesněno — vědomě odloženo, ne zapomenuto). Ostatní beze změny (rok praxe, logo, reálné fotky, doména, finální schválení palety).
+
+**Dotčené soubory:**
+- `index.html` (upraven — IČO doplněno na 2 místech, DIČ odstraněno)
+
+---
+
+## 2026-08-17 — Zmínka o stříkacím zařízení Airless
+
+**Fáze projektu po této session:** Beze změny (first-draft implementace). Nový klientský fakt (typ používaného vybavení) doplněn do textu na 5 místech.
+
+**Co bylo uděláno:**
+- Uživatel sdělil nový fakt: Michal při velkoplošných pracích (fasády, průmyslové haly) používá moderní stříkací zařízení Airless. Doplněno do `index.html` na místa, na kterých se uživatel domluvil přes upřesňující otázku:
+  1. Nový prostřední odstavec v sekci "O mně" (mezi stávajícími dvěma odstavci).
+  2. Věta doplněná do popisu služby "Velkoplošné stříkání hal" v sekci Služby.
+  3. Věta doplněná do úvodního `section-intro` odstavce sekce Galerie.
+  4. `data-caption` fotky `galerie-04.jpg` (fasáda, štítová stěna s omítkou) — doplněna druhá věta o stříkání Airless.
+  5. `data-caption` fotky `galerie-08.jpg` (hala, sušící se bílé dveře) — doplněna druhá věta o stříkání Airless.
+
+**Rozhodnutí a proč:**
+- Žádná z 11 galerijních fotek nezobrazuje stříkací pistoli/stroj přímo v akci (ověřeno vizuální kontrolou souborů), takže nebylo možné poznat, na kterých fotkách se reálně stříkalo. Místo hádání byla uživateli položena upřesňující otázka (kam přesně info umístit); uživatel zvolil kombinaci obecné zmínky (O mně, Služby, úvod galerie) + doplnění do popisků dvou konkrétních fotek podle vlastního výběru kategorie (1× fasáda, 1× hala — odpovídá službám, kde se stříkání reálně nabízí).
+- `alt` texty fotek zůstaly beze změny (čistě vizuální popis pro čtečky) — zmínka o Airless přidána jen do `data-caption` (zobrazuje se v lightboxu jako doprovodný text, nemusí popisovat jen to, co je doslova vidět).
+
+**Dotčené soubory:**
+- `index.html` (upraven — 5 míst, viz výše)
+
+---
+
+## 2026-08-17 — Výměna hero fotky (kuželna při přípravě na malování)
+
+**Fáze projektu po této session:** Beze změny (first-draft implementace). Uživatel ve složce `Fotky/` nahradil zdrojový hero soubor (`HERO SEKCE - Varchol.png`, nový mtime 22:41 oproti zbytku složky z ~20:45–20:48) — původní fotka (tři muži na schodišti) nahrazena širokoúhlým záběrem kuželny s kuželkami v pozadí, celá zakrytá ochrannou fólií před malováním, se žebříkem u zdi. Ostatní zdrojové fotky ve `Fotky/` beze změny (galerie 1–10, `VARCHOL PŘI PRÁCI.png`), takže se netýkalo `assets/img/galerie-*.jpg` ani `o-nas.jpg`.
+
+**Co bylo uděláno:**
+- Nový zdrojový PNG (1130×912) převeden přes `sips` na `assets/img/hero.jpg` (kvalita 80, výstup 1130×912, ~216 KB) — nahrazuje starý `hero.jpg` (736×912, fotka tří mužů).
+- `index.html`: aktualizován `alt` text hero obrázku (popisuje kuželnu/dráhu/kuželky/fólii/žebřík místo mužů na schodišti) a `width` atribut z `736` na `1130` (výška beze změny, `912`).
+- `assets/css/style.css`: `object-position` pro hero obrázek změněn z `50% 20%` (bias nahoru, laděno na postavy ve starém snímku) na `50% 50%` (střed) — nový záběr má zajímavý obsah rozprostřený po celé výšce (stropní světla, žebřík, okna, zakrytá dráha), střed dává nejlepší kompozici. Komentář u pravidla přepsán, aby odpovídal novému obsahu fotky (starý text zmiňoval "tall group shot"/"workers' upper bodies", což už neplatí).
+- Ověřeno vizuálně přes Playwright (Chromium binárka našeptaná z existující cache `~/Library/Caches/ms-playwright`, čerstvý `npm install playwright` jen pro JS balíček) na desktopu (1440×900) a mobilu (390×844) — nová fotka čitelně vyplňuje širokou hero pásku, text zůstává čitelný přes scrim.
+
+**Rozhodnutí a proč:**
+- Nový zdrojový snímek je téměř čtvercový (1130×912, poměr ~1,24), zatímco hero box je široký pás (`.hero__media` vyplňuje celou výšku `.hero` v `min-height:78vh`, efektivní poměr širokoúhlý) — `object-fit:cover` tedy ořezává hlavně svisle. Kontrolní ořez nasimulovaný přes `sips --cropToHeightWidth` na 21:9 potvrdil, že středový ořez zachytí stropní světla, žebřík, okna i zakrytou dráhu čitelně, proto zvolen `50% 50%` místo dalšího dolaďování.
+- `alt` text popisuje kuželnu (kuželky viditelné v pozadí uprostřed snímku), ne obecnou "chodbu" — první návrh textu byl opraven po bližším pohledu na fotku, aby popis odpovídal skutečnému obsahu (přesnost alt textu > obecnost).
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Beze změny oproti minulému záznamu (rok praxe, logo, DIČ, doména, finální schválení palety).
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Beze změny oproti minulým záznamům (formulář netestovaný end-to-end, tap targety, zbytek a11y průchodu, `node_modules` v projektu nenainstalované).
+
+**Dotčené soubory:**
+- `assets/img/hero.jpg` (přegenerován z nového zdroje ve `Fotky/`)
+- `index.html` (upraven — `alt` a `width` atribut hero obrázku)
+- `assets/css/style.css` (upraven — `object-position` a komentář u hero obrázku)
+
+---
+
+## 2026-08-17 — Oprava šedé mezery pod headerem + druhá výměna hero fotky
+
+**Fáze projektu po této session:** Beze změny (first-draft implementace). Uživatel mezitím znovu obměnil obsah `Fotky/` (nový soubor `HERO SEKCE VARCHOL.png`, 678×912 — fotka kuželny z předchozí session ve složce už není). Zároveň nahlásil vizuální bug: šedá/béžová mezera mezi headerem a hero fotkou.
+
+**Co bylo uděláno:**
+- **Nalezen a opraven skutečný CSS bug** (ne jen kosmetika): pravidlo `.hero__media .photo-placeholder--hero` neslo `padding-top:calc(var(--header-height) + var(--space-2xs))` určené jen pro prázdný placeholder stav (posouvá ikonu+popisek pod header). Protože selektor mířil na `.photo-placeholder--hero` obecně, aplikoval se i na `.photo-placeholder--filled` variantu se skutečnou fotkou — vytvořil tak ~84px mezeru (`--bg-alt` pozadí placeholderu) mezi headerem a obrázkem, protože obrázek uvnitř má `height:100%` počítanou až od konce paddingu. Oprava: `padding-top`/`justify-content:flex-start` přesunuty na nový selektor `.hero__media .photo-placeholder--hero:not(.photo-placeholder--filled)`, takže vyplněná hero fotka teď sahá až k patě headeru.
+- Nová zdrojová fotka `Fotky/HERO SEKCE VARCHOL.png` (678×912, portrét — Michal na lešení maluje roh strop/stěna, starorůžové stěny) převedena přes `sips` na `assets/img/hero.jpg` (kvalita 80, beze změny rozměrů, ~161 KB), nahrazuje starou kuželnu.
+- `index.html`: `alt` text a `width` atribut (`1130`→`678`) aktualizovány na novou fotku.
+- `assets/css/style.css`: komentář u `object-position` přepsán (zmiňoval starou "skoro čtvercovou" fotku, teď popisuje novou "vysokou portrétní" fotku).
+- Ověřeno přes Playwright (desktop 1440×900, mobil 390×844): na desktopu mezera zmizela a širokoúhlý ořez (kolem 50/50 %) hezky zachytí lešení, malíře i stěnu. Vyzkoušen i posun `object-position` na `50% 62%` pro mobil, ale zrušen — na mobilu (úzký/vysoký hero box) je obrázek vždy výškově omezený (`object-fit:cover` škáluje podle výšky), takže se celá výška fotky zobrazí vždy bez ohledu na Y hodnotu; posun jen zhoršil desktopový ořez (uřízl ruku se štětcem), takže ponecháno `50% 50%`.
+
+**Rozhodnutí a proč:**
+- Grey zóna nebyla o chybějícím "roztažení" fotky přes CSS (`object-fit`/`width`/`height` byly už správně `100%`) — byla to specificita CSS selektorů, kde padding pro prázdný stav "prosakoval" do vyplněného stavu. Řešení `:not(.photo-placeholder--filled)` je přesně cílené, nemění nic jiného na chování prázdného placeholderu (zůstává použitelný, kdyby fotka zase chyběla).
+- `object-position` ponechána na `50% 50%` navzdory tomu, že mobil ukazuje dost prázdného stropu nahoře — to je vlastnost samotné fotky (hodně stropu nad malířem ve snímku), ne doladitelná přes CSS crop na mobilu (viz vysvětlení výše), a posun by zhoršil desktop bez zisku na mobilu. Pokud by to vadilo, řešením by bylo oříznout přímo zdrojový soubor, ne jen `object-position`.
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Beze změny (rok praxe, logo, DIČ, doména, finální schválení palety).
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Beze změny oproti minulým záznamům. Nově vědomě přijato: mobilní hero crop ukazuje výrazný podíl prázdného stropu nad malířem — inherentní vlastnost nové zdrojové fotky, ne bug.
+
+**Dotčené soubory:**
+- `assets/img/hero.jpg` (přegenerován z nového zdroje `Fotky/HERO SEKCE VARCHOL.png`, 678×912)
+- `index.html` (upraven — `alt` a `width` atribut hero obrázku)
+- `assets/css/style.css` (upraven — oprava selektoru `.hero__media .photo-placeholder--hero` pro padding, komentář u `object-position`)
+
+---

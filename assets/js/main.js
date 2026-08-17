@@ -94,7 +94,7 @@
   }
 
   /* ---------------------------------------------------------------------
-   * 3. Galerie — filtr, rozbalení, lightbox
+   * 3. Galerie — filtr, lightbox
    * ------------------------------------------------------------------- */
   function initGalleryFilters() {
     var filterButtons = document.querySelectorAll('.gallery-filters .pill[data-filter]');
@@ -103,10 +103,6 @@
 
     var currentFilter = 'all';
 
-    // Skrývání přes třídu .is-filtered-out (ne inline style): inline style
-    // by přebil CSS pravidlo pro [data-expanded="false"] .gallery-item--extra
-    // a rozbil kombinaci filtru s rozbalením. Třída se v CSS jen doplní
-    // vedle existujícího pravidla pro extra položky.
     function applyFilter() {
       var items = galleryGrid.querySelectorAll('.gallery-item');
       items.forEach(function (item) {
@@ -123,20 +119,6 @@
         });
         applyFilter();
       });
-    });
-  }
-
-  function initGalleryExpand() {
-    var galleryExpand = document.getElementById('galleryExpand');
-    var galleryGrid = document.getElementById('galleryGrid');
-    if (!galleryExpand || !galleryGrid) return;
-
-    galleryExpand.addEventListener('click', function () {
-      var isExpanded = galleryGrid.dataset.expanded === 'true';
-      var next = !isExpanded;
-      galleryGrid.dataset.expanded = String(next);
-      galleryExpand.setAttribute('aria-expanded', String(next));
-      galleryExpand.textContent = next ? 'Zobrazit méně' : 'Zobrazit celou galerii';
     });
   }
 
@@ -157,21 +139,17 @@
     }
 
     function openLightbox(item) {
+      var sourceImg = item.querySelector('img');
       var caption = item.dataset.caption || '';
 
-      // Struktura odpovídá .photo-placeholder uvnitř galerie, jen naplněná
-      // popiskem z data-caption.
-      lightboxBody.innerHTML =
-        '<figure class="photo-placeholder photo-placeholder--lightbox">' +
-        '<svg class="photo-placeholder__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' +
-        '<rect x="2.5" y="6" width="19" height="14" rx="2"></rect>' +
-        '<circle cx="12" cy="13" r="4"></circle>' +
-        '<path d="M8 6l1.5-2h5L16 6"></path>' +
-        '</svg>' +
-        '<figcaption class="photo-placeholder__caption"></figcaption>' +
-        '</figure>';
-      var figcaption = lightboxBody.querySelector('figcaption');
-      if (figcaption) figcaption.textContent = caption;
+      lightboxBody.innerHTML = '<img alt=""><p class="lightbox__caption"></p>';
+      var lightboxImg = lightboxBody.querySelector('img');
+      var lightboxCaption = lightboxBody.querySelector('.lightbox__caption');
+      if (sourceImg) {
+        lightboxImg.src = sourceImg.currentSrc || sourceImg.src;
+        lightboxImg.alt = sourceImg.alt || '';
+      }
+      if (lightboxCaption) lightboxCaption.textContent = caption;
 
       lastTrigger = item;
       lightbox.removeAttribute('hidden');
@@ -354,7 +332,6 @@
     initNav();
     initScrollspy();
     initGalleryFilters();
-    initGalleryExpand();
     initLightbox();
     initContactForm();
     initFooterYear();

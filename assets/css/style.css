@@ -37,7 +37,7 @@
   --primary:#3F5A54;
   --primary-dark:#2E4440;
   --accent:#B5673F;
-  --accent-2:#C9A227;
+  --accent-2:#8CA173;
   --accent-fg:#FFF8EF;
   --line:#DED2BE;
   --font-heading:'Fraunces', Georgia, serif;
@@ -361,8 +361,19 @@ h3{
   font-weight:600;
 }
 
-.primary-nav__cta{
+.primary-nav__cta-group{
+  display:flex;
+  align-items:center;
+  gap:var(--space-2xs);
   margin-left:var(--space-sm);
+}
+.primary-nav__cta{
+  padding:13px 26px;
+  font-size:1rem;
+}
+.primary-nav__cta--secondary{
+  padding:10px 22px;
+  font-size:.92rem;
 }
 
 /* -------------------------------------------------------------------------
@@ -383,10 +394,14 @@ h3{
 .hero__media .photo-placeholder--hero{
   width:100%;
   height:100%;
-  /* Icon+caption sit near the top instead of dead-center: the real h1/
-     subtitle/buttons are anchored to the bottom of this same box (see
-     .hero) and can grow tall on narrow viewports, so a centered caption
-     would collide with them. */
+}
+/* Icon+caption sit near the top instead of dead-center: the real h1/
+   subtitle/buttons are anchored to the bottom of this same box (see
+   .hero) and can grow tall on narrow viewports, so a centered caption
+   would collide with them. Scoped to the empty state only — the filled
+   variant holds a real photo that must reach the very top of the hero
+   band flush against the header, with no reserved gap above it. */
+.hero__media .photo-placeholder--hero:not(.photo-placeholder--filled){
   justify-content:flex-start;
   padding-top:calc(var(--header-height) + var(--space-2xs));
 }
@@ -526,12 +541,32 @@ h3{
 }
 
 .photo-placeholder--gallery{
-  aspect-ratio:4/3;
+  aspect-ratio:3/4;
 }
 
-.photo-placeholder--lightbox{
-  aspect-ratio:4/3;
+/* Filled variant — holds a real <img> instead of the empty-state icon+caption.
+   Reuses the same aspect-ratio/tape rules above, just swaps the dashed
+   "waiting for a photo" look for a solid frame around the actual photo. */
+.photo-placeholder--filled{
+  padding:0;
   border-style:solid;
+  border-color:var(--line);
+  background:var(--bg-alt);
+}
+.photo-placeholder--filled img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.photo-placeholder--hero.photo-placeholder--filled{
+  border:0;
+}
+.hero__media .photo-placeholder--filled img{
+  /* Source photo is a tall portrait shot; centering the crop within the
+     wide hero band keeps the scaffolding, the person painting and the
+     wall/ceiling context all in frame instead of just empty ceiling. */
+  object-position:50% 50%;
 }
 
 /* Masking-tape corners */
@@ -736,23 +771,8 @@ h3{
   box-shadow:var(--shadow-sm);
 }
 
-.gallery-grid[data-expanded="false"] .gallery-item--extra{
-  display:none;
-}
-.gallery-grid[data-expanded="true"] .gallery-item--extra{
-  display:block;
-}
-
-/* Filter state, toggled by main.js — independent of the expand/collapse
-   rule above, so an item can be hidden by either or both conditions. */
 .gallery-item.is-filtered-out{
   display:none;
-}
-
-.gallery-expand{
-  display:flex;
-  justify-content:center;
-  margin-top:var(--space-lg);
 }
 
 .lightbox[hidden]{
@@ -799,9 +819,24 @@ h3{
 }
 .lightbox__body{
   display:flex;
+  flex-direction:column;
+  align-items:center;
 }
-.lightbox__body .photo-placeholder{
-  width:100%;
+.lightbox__body img{
+  display:block;
+  width:auto;
+  max-width:100%;
+  height:auto;
+  max-height:70vh;
+  margin:0 auto;
+  border-radius:var(--radius-sm);
+}
+.lightbox__caption{
+  margin-top:var(--space-sm);
+  font-size:.9rem;
+  line-height:1.5;
+  color:var(--muted);
+  text-align:center;
 }
 
 /* -------------------------------------------------------------------------
@@ -978,6 +1013,12 @@ h3{
   margin-top:var(--space-sm);
 }
 
+.site-footer__links h4,
+.site-footer__contact h4{
+  color:#fff;
+  font-weight:700;
+}
+
 .site-footer__links{
   display:flex;
   flex-direction:column;
@@ -1030,17 +1071,6 @@ h3{
   padding:var(--space-lg) 0;
 }
 
-/* Shrink the hero placeholder's marker so it stays clear of the headline
-   even on narrow phones (see .hero__media .photo-placeholder--hero). */
-.hero__media .photo-placeholder--hero .photo-placeholder__icon{
-  width:32px;
-  height:32px;
-}
-.hero__media .photo-placeholder--hero .photo-placeholder__caption{
-  font-size:.75rem;
-  max-width:22ch;
-}
-
 #primaryNav.primary-nav{
   position:fixed;
   top:var(--header-height);
@@ -1066,9 +1096,14 @@ h3{
 .primary-nav__link{
   font-size:1.1rem;
 }
-.primary-nav__cta{
+.primary-nav__cta-group{
   margin-left:0;
   margin-top:var(--space-sm);
+  width:100%;
+}
+.primary-nav__cta{
+  flex:1;
+  text-align:center;
 }
 
 .o-nas__grid{ grid-template-columns:1fr; }
@@ -1118,28 +1153,28 @@ h3{
     overflow:visible;
     z-index:auto;
     transition:none;
-    /* flex:1 — nav vyplní zbylou šířku vedle wordmarku, jinak si vezme jen
-       šířku obsahu a space-between na .site-header__inner ho jako celek
-       odsune až k pravému okraji (velká mezera hned za logem). */
+    /* flex:1 — nav vyplní zbylou šířku vedle wordmarku; justify-content
+       posouvá odkazy + CTA skupinu jako celek k pravému okraji, místo aby
+       se odkazy rozprostíraly přes celou šířku. */
     display:flex;
     align-items:center;
+    justify-content:flex-end;
     flex:1;
   }
   .primary-nav__list{
     flex-direction:row;
     align-items:center;
-    /* flex:1 + justify-content rozprostřou odkazy rovnoměrně přes zbylou
-       šířku mezi logem a CTA tlačítkem; gap drží minimální odstup, kdyby
-       se odkazy kvůli užšímu desktopu přiblížily víc, než je čitelné. */
-    flex:1;
-    justify-content:space-between;
+    /* Pevný gap místo space-between drží odkazy rovnoměrně, ale blízko
+       u sebe, ať se nerozprostírají přes celou šířku headeru. */
+    gap:var(--space-lg);
   }
   .primary-nav__link{
     font-size:.95rem;
   }
-  .primary-nav__cta{
+  .primary-nav__cta-group{
     margin-top:0;
-    margin-left:var(--space-lg);
+    margin-left:var(--space-xl);
+    width:auto;
   }
 }
 
