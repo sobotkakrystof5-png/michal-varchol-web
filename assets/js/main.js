@@ -140,16 +140,13 @@
 
     function openLightbox(item) {
       var sourceImg = item.querySelector('img');
-      var caption = item.dataset.caption || '';
 
-      lightboxBody.innerHTML = '<img alt=""><p class="lightbox__caption"></p>';
+      lightboxBody.innerHTML = '<img alt="">';
       var lightboxImg = lightboxBody.querySelector('img');
-      var lightboxCaption = lightboxBody.querySelector('.lightbox__caption');
       if (sourceImg) {
         lightboxImg.src = sourceImg.currentSrc || sourceImg.src;
         lightboxImg.alt = sourceImg.alt || '';
       }
-      if (lightboxCaption) lightboxCaption.textContent = caption;
 
       lastTrigger = item;
       lightbox.removeAttribute('hidden');
