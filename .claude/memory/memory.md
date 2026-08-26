@@ -230,3 +230,162 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `assets/css/style.css` (upraven — oprava selektoru `.hero__media .photo-placeholder--hero` pro padding, komentář u `object-position`)
 
 ---
+
+## 2026-08-22 — Potvrzení "20+ let zkušeností", první push na GitHub a nasazení na Vercel
+
+**Fáze projektu po této session:** Web je poprvé živý na produkční Vercel URL. Formulář stále end-to-end neotestovaný (chybí `RESEND_API_KEY` na Vercelu).
+
+**Co bylo uděláno:**
+- Na začátku session byly ve working directory dvě needitované změny (vznikly mimo tuto session, bez záznamu v memory): stat-strip placeholder `?` nahrazen textem `20+`, a titulek/meta/H1 zjednodušené z "Litoměřice po Roudnici nad Labem" na obecnější "Litoměřice a okolí" (Roudnice se v briefu nikde nezmiňuje, takže jde o neutrální zjednodušení, ne rozpor s briefem).
+- Protože brief výslovně říká "roky praxe zatím nedodal klient, nevymýšlet číslo" a memory měla tento bod jako otevřenou otázku, před commitem jsem se zeptal uživatele, jestli je `20+` potvrzené číslo. **Uživatel potvrdil, že `20+ let zkušeností` je platné a má se použít.**
+- Commit `e524b25` ("Confirm 20+ years experience, simplify service area copy") a push na `origin/main` (GitHub repo `sobotkakrystof5-png/michal-varchol-web`).
+- Zjištěno, že projekt už byl dřív lokálně propojený s Vercel projektem `michal-varchol-web` (`.vercel/project.json`, gitignored) a Vercel CLI byl přihlášený jako `sobotkakrystof5-png`.
+- Nasazeno přes `vercel --prod --yes` → produkční alias **https://michal-varchol-web.vercel.app**, ověřeno `curl` (HTTP 200, správný `<title>`).
+- `vercel env ls` potvrdil, že na Vercelu **nejsou nastavené žádné env proměnné** — `RESEND_API_KEY` chybí, takže kontaktní formulář (`api/contact.js`) na produkci aktuálně nebude umět odeslat e-mail.
+
+**Rozhodnutí a proč:**
+- Nasadil jsem beze čekání na `RESEND_API_KEY`, protože uživatel výslovně požádal jen o "push na github a deploy na vercel" — nasazení statické části webu není blokované chybějícím klíčem, jen kontaktní formulář zůstane nefunkční, dokud klíč nepřibude.
+- Roky praxe: rozhodnutí ponechat "20+" bylo uživatelovo přímé potvrdnutí přes AskUserQuestion, ne moje domněnka — pokud se ukáže jako nesprávné, je to na uživateli/klientovi opravit skutečné číslo.
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Rok založení / roky praxe: **částečně vyřešeno** — "20+ let zkušeností" teď na webu, ale přesný rok založení firmy pořád není known (pro případné budoucí zpřesnění).
+- Beze změny: logo, DIČ, skutečná doména (aktuálně `REPLACE-WITH-DOMAIN.cz` v canonical/OG tagách — produkční Vercel URL je zatím jediná živá adresa), finální schválení palety.
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- `RESEND_API_KEY` není nastaven na Vercelu — kontaktní formulář na živé produkci (https://michal-varchol-web.vercel.app) aktuálně neodešle e-mail. Nutné před tím, než se web sdílí klientovi/veřejnosti jako plně funkční.
+- Canonical/OG URL v `index.html` pořád ukazují na placeholder doménu `REPLACE-WITH-DOMAIN.cz`, ne na skutečnou Vercel/produkční adresu — nekonzistence, kterou stojí za to vyřešit až se doména ujasní.
+
+**Dotčené soubory:**
+- `assets/css/style.css`, `index.html` (commit `e524b25`, viz diff výše)
+- Žádné nové soubory — nasazení proběhlo přes existující `.vercel/project.json` link.
+
+---
+
+## 2026-08-24 — Přebarvení palety na "luxusní dřevo" + posun hero textu vlevo
+
+**Fáze projektu po této session:** Beze změny co do nasazení (web zůstává živý na https://michal-varchol-web.vercel.app ve staré paletě — dnešní změna je zatím jen lokální, nenasazená, nenacommitnutá).
+
+**Co bylo uděláno:**
+- Uživatel poslal referenční fotku luxusního dřevěného interiéru (trámový strop, ořechový obklad, lněná pohovka, olivově zelené doplňky, teplé denní světlo) a dal přímé zadání: zbavit se stávající tlumené petrolové/modro-zelené primární barvy (`--primary:#3F5A54`), chtít "světlejší" web, a přebarvit celou paletu do stylu teplého prémiového dřeva podle reference. Zároveň požádal o posun hero textu (nadpis/podnadpis/CTA) vlevo.
+- Odvozena a implementována nová paleta v `assets/css/style.css` `:root`: `--bg:#F7F2EA→#FAF6EF`, `--bg-alt:#EFE7D8→#F1E9DB`, `--fg:#2A2521→#2E241C`, `--muted:#574E43→#6B5A48`, `--primary:#3F5A54→#6B4630`, `--primary-dark:#2E4440→#472C1D`, `--accent:#B5673F→#BF8038`, `--accent-2:#8CA173→#96906C`, `--accent-fg:#FFF8EF→#FDF9F2`, `--line:#DED2BE→#E4D7C3`, `--error-text:#8A3324→#B23B1F`. Kontrast nové palety ověřen výpočtem (text na `--primary` tlačítku ~7,9:1 WCAG, error-text vůči pozadí ~5,5:1 a barevně jasně odlišný od hnědého primary).
+- 16 míst v `style.css`, kde byly staré barvy `--fg`/`--accent-fg` napsané natvrdo jako `rgba(42,37,33,…)`/`rgba(255,248,239,…)` (scrim na hero fotce, stíny, lightbox pozadí, patička, sekundární tlačítko v hero), přepsáno na `rgba(46,36,28,…)`/`rgba(253,249,242,…)`, aby odpovídaly novým `--fg`/`--accent-fg`.
+- Hero text přestal být centrovaný jako vlastní 640px box (nesl duplicitně třídy `.hero__content` i `.container`, čímž `margin-inline:auto` z `.container` box centrovalo) — `.container` třída odstraněna z `<div class="hero__content">` v `index.html` a `.hero__content` teď má vlastní `margin-left:max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)))`, čímž se levá hrana textu zarovná přesně s levou hranou obsahu ostatních sekcí (asymetrický, ne mechanicky centrovaný layout, v duchu pravidla 0).
+- Práce byla zadaná dvěma paralelním subagentům (jeden na CSS/HTML implementaci, druhý na aktualizaci memory systému) na žádost uživatele o maximální paralelní výkon. Oba opakovaně padaly na tranzientní síťové/API chyby (ECONNRESET, DNS, certifikát) uprostřed práce — CSS agent stihl jen `:root` blok a část rgba náhrad, memory agent nestihl nic. Zbytek (dokončení rgba náhrad, hero CSS/HTML, i celý zápis do memory systému) dokončila orchestrující session přímo.
+
+**Rozhodnutí a proč:**
+- `--accent-2` posunuto z `#8CA173` (sytější zelená) na `#96906C` (olivově-taupe) i když nebylo explicitně zmíněné — vzhledem k tomu, že klient výslovně odmítl "modro zelenou", šlo o preventivní opatření, aby žádná zbývající barva v paletě nečetla jako "ta zelená, co nechtěl", ne jako změna nad rámec zadání.
+- `--error-text` zesvětlen z `#8A3324` na `#B23B1F` čistě proto, aby zůstal barevně jasně odlišný od nového hnědého `--primary` (oba jsou v hnědo-červeném spektru) — funkční requirement (chybové hlášení formuláře musí být rozeznatelné od brand barvy), ne estetická volba.
+- Stat-strip karta pod hero (`.hero__stats`) záměrně ponechána centrovaná/vlastní karta — uživatel žádal posun jen "hero textu", ne celé hero sekce.
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Beze změny (rok založení/praxe, logo, DIČ, doména) plus nově: klient tuto konkrétní paletu a posun hero textu ještě neviděl naživo/nasazenou — dnešní změna je založená na jeho slovním zadání + referenční fotce, ne na schválení hotového výsledku.
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Změna zatím jen lokální — necommitnutá, nenasazená na Vercel. Živá produkce (https://michal-varchol-web.vercel.app) pořád běží se starou petrolovou paletou.
+- Vizuální QA (screenshoty přes více breakpointů, kontrola, že se nikde nezalamuje/nepřekrývá kvůli novému `margin-left` na hero textu) ještě neproběhla v této session — plánovaná jako další krok.
+
+**Dotčené soubory:**
+- `assets/css/style.css` (nová paleta v `:root` + 16× hardcoded rgba + `.hero__content` layout)
+- `index.html` (odebrána třída `container` z `.hero__content`)
+- `.claude/memory/pravidla.md` (sekce 3 a bod 2 sekce 4 aktualizovány na novou paletu/layout)
+- `.claude/memory/index.md` (přepsán blok "Aktuální stav")
+
+---
+
+## 2026-08-24 — Nová sekce Reference (mezi Službami a Galerií)
+
+**Fáze projektu po této session:** Přebarvená verze z předchozí session dnes zůstává necommitnutá/nenasazená (viz předchozí záznam). Navíc přibyla nová sekce Reference — také zatím jen lokálně, necommitnuto.
+
+**Co bylo uděláno:**
+- Zadání znělo přidat sekci "Reference" po sekci Služby, se 3–4 referencemi "na základě Firmy.cz" a přímým odkazem na Firmy.cz — tedy explicitně nevymýšlet recenze, ale vycházet ze skutečného profilu.
+- Dohledán skutečný profil klienta na Firmy.cz: `https://www.firmy.cz/detail/13509932-michal-varchol-litomerice-predmesti.html` (adresa Werichova 2007/2, Litoměřice, Předměstí sedí). Profil má hodnocení "Fantastické" a 27 recenzí.
+- Nejdřív načteno přes WebFetch (shrnutí menším modelem) — to ale vymyslelo neexistující recenzentku "Lida Dablik" s recenzí "Mohu vřele doporučit" a datem v budoucnosti (20.8.2026). Ověřeno stažením syrového HTML přes `curl` + regex extrakcí — skuteční recenzenti viditelní na stránce jsou **Roman Brázda, Martin Mlynek a Pavel Klouček** (všichni 5/5 hvězdiček), Lida Dablik na stránce vůbec není. Do webu šly jen tyto tři ověřené, doslovné citace (u Brázdy a Mlynka jde o zkrácený náhled končící "…", protože i samotné Firmy.cz recenzi na stránce zkracuje za tlačítkem "Více" a plný text není v HTML dostupný bez přihlášení/JS dotažení).
+- Přidána sekce `#reference` v `index.html` mezi `#sluzby` a `#galerie`: section-marker (paint-swatch motiv) + H2 + úvodní věta (bez klišé, 1. osoba) + `reference-grid` se 3 kartami (hvězdičky, citace, jméno, datum) + `btn--secondary` odkaz "Zobrazit všechny reference na Firmy.cz" (`target="_blank" rel="noopener noreferrer"`) přímo na profil výše.
+- Asymetrie zachována podle pravidla 0 (žádné 3 identické karty): první karta (Roman Brázda, nejnovější a nejdelší citace) je `--featured` — širší (`grid-column:span 2` na desktopu/tabletu) a s citací v `--font-heading` větším písmem, zbylé dvě jsou menší standardní karty. Na mobilu (`<800px`) grid kolabuje na 1 sloupec, featured karta si podrží jen typografický rozdíl.
+- Přidán nový anchor `#reference` do header nav i footer "Rychlé odkazy" (pravidlo v `pravidla.md` sekce 2 — nový anchor musí být synchronně v obou místech).
+- CSS přidáno do `assets/css/style.css` jako nová sekce "10b. Reference" + odpovídající mobile/tablet breakpointy (`.reference-grid` 1 sloupec pod 800px, 3 sloupce s `--featured` span 2 od 800px).
+- Vizuálně ověřeno přes headless Chrome + Playwright (goto `localhost:8791`, screenshot `#reference` elementu) na desktopu (1400px) i mobilu (390px) — layout, barvy, aktivní nav odkaz "Reference" a asymetrie karet vypadají podle očekávání, žádné console chyby v konzoli.
+
+**Rozhodnutí a proč:**
+- Recenze se necitují/needitují nad rámec doslovného přepisu (ani drobná oprava velkého písmene/zkratky "p. Varchola" u Pavla Kloučka) — jde o citaci reálné třetí osoby, ne o marketingový text klienta, takže se na ni vztahuje stejné pravidlo "nic nevymýšlet/nezkreslovat" jako na fakta v sekci 1 `pravidla.md`, jen přísněji (nešlo o styl, šlo o přesnost citace).
+- Zkrácené citace (končící "…") jsou ponechány zkrácené přesně jak je zobrazuje samotné Firmy.cz, místo aby se domýšlel/generoval konec věty — plný text není bez přihlášení dostupný.
+- Odkaz na Firmy.cz veden jako `target="_blank"` (opouští web), na rozdíl od interních kotev.
+
+**Vedlejší zjištění (nesouvisí přímo se zadáním, ale relevantní pro otevřené otázky v `index.md`):** Firmy.cz profil uvádí u klienta oficiální web `https://malirske-prace-litomerice.cz/` — to by mohla být ta "skutečná doména", která v `index.html` `<head>` chybí (canonical/OG pořád ukazují na `REPLACE-WITH-DOMAIN.cz`). Nebylo ověřeno, jestli doména reálně žije/patří klientovi ani použito bez potvrzení — jen zaznamenáno jako vodítko pro příště.
+
+**Otevřené otázky (čeká na klienta/uživatele):** beze změny oproti předchozímu záznamu, plus nově: potvrdit, jestli `malirske-prace-litomerice.cz` je klientova skutečná doména (viz vedlejší zjištění výše), než se použije v canonical/OG tagech.
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Sekce Reference zatím neprošla schválením klientem (stejně jako přebarvení z předchozí session).
+- Recenze na Firmy.cz se mohou v čase měnit/přibývat — tento výběr 3 recenzí je snímek stavu k 24.8.2026, nejde o živě synchronizovaný feed.
+
+**Dotčené soubory:**
+- `index.html` (nová sekce `#reference` + nav odkaz v headeru a footeru)
+- `assets/css/style.css` (nová sekce "10b. Reference" + breakpointy)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (přepsán blok "Aktuální stav")
+
+---
+
+## 2026-08-26 — Galerie přepracována na kategorie s "peeking" fotkami
+
+**Fáze projektu po této session:** Galerie už nezobrazuje 11 fotek v jednom filtrovaném gridu — na žádost uživatele je teď rozdělená do 5 klikatelných kategorií podle typu práce, každá s hlavní fotkou a náhledem několika dalších fotek vykukujících zpoza ní. Web pořád není nasazený na produkci (viz otevřené body níže, beze změny).
+
+**Co bylo uděláno:**
+- Uživatel dodal reálné fotky do `fotky/` (mimo git, lokální složka), rozdělené do 5 podsložek podle kategorie, každá s `MAIN`/`MAIN FOTO` (1 hlavní fotka) a `OTHERS`/`OSTATN9` (zbytek zakázky). Kategorie a počty (main + others): Dřevěné fasády 1+23, Malby interiérů 1+22, Okna a dveře 1+22, Sekce renovace dřevěných pergol a trámu v interiéru 1+22, Stříkání 1+16 — celkem 110 fotek.
+- Všechny fotky zpracovány přes `sips` (macOS) do `assets/img/galerie/<slug>/`: `main.jpg` (dlouhá hrana 1000 px, kvalita 60), `others/01.jpg…NN.jpg` (dlouhá hrana 1000 px, kvalita 50, číslováno podle abecedního pořadí zdrojových souborů), `peek/01–03.jpg` (dlouhá hrana 380 px, kvalita 45, jen první 3 "others" fotky, pro dekorativní náhled na zavřené kartě). Staré `assets/img/galerie-01…11.jpg` (plochý grid) smazány, nic na ně už needkazuje.
+- `index.html`: sekce Galerie přepsána — `.gallery-categories` (5 karet `.gallery-card`, jedna `--featured`) nahrazuje starý `.gallery-grid` + filtrovací pilulky. Každá karta: `.gallery-card__photo` (positioning wrapper) obsahující `.gallery-card__stack` (2–3 `.gallery-card__peek` dekorativní náhledy, `aria-hidden`) + `.gallery-card__main` (hlavní fotka, masking-tape rohy), plus `.gallery-card__label` (titulek, 1řádkový popis, počet fotek) mimo photo wrapper. Klik na kartu otevírá `#categoryModal` (grid všech fotek kategorie, generovaný v JS), klik na fotku v modalu otevírá `#lightbox` (teď s prev/next šipkami a čítačem "X / Y", dřív jen single-image bez navigace).
+- `assets/js/main.js`: `initGalleryFilters` + starý `initLightbox` (vázaný na `#galleryGrid`) nahrazeny jednou funkcí `initGallery()` — staví pole obrázků z `GALLERY_CATEGORIES` (slug → počet "others" fotek, musí sedět s počtem souborů na disku), spravuje modal kategorie i lightbox jako dvě vrstvy nad sebou (focus trap na tu vrstvu, která je zrovna otevřená; Escape zavírá nejdřív lightbox, pak modal; šipky ←/→ v lightboxu; focus se po zavření vrací na prvek, který vrstvu otevřel).
+- `assets/css/style.css`: sekce "11. Galerie" kompletně přepsána (karty se stackem/peek efektem, hover/focus rozevírá peeking fotky dál — `translate`, `rotate` — modal kategorie, rozšířený lightbox s `.lightbox__nav`). Responsive: mobil 1 sloupec, ≥800px 2 sloupce (featured přes celou šířku, širší 16:9 crop), ≥1025px 3 sloupce (featured přes 2 z 3, zbylé 4 karty doplní řádek automatickým grid flow — žádné `grid-template-areas` nebylo potřeba pro přesně 5 položek).
+- Vizuálně ověřeno přes headless Chrome/Playwright (nainstalováno lokálně do scratchpadu, ne do projektu) na 360–1400px šířkách + hover/klik/klávesnicové interakce: žádné console chyby, focus trap a návrat fokusu fungují, Escape zavírá vrstvy ve správném pořadí, šipky mění fotku a čítač.
+
+**Rozhodnutí a proč:**
+- Peeking fotky (`.gallery-card__peek`) jsou dekorativní (`aria-hidden="true"`, žádný `alt`) — skutečný obsah kategorie je dostupný přes `.gallery-card__main` (má popisný `alt`) a přes modal/lightbox po kliknutí. Necháno takhle, aby čtečka nečetla 15 nepopsaných miniatur navíc.
+- Alt text u "others" fotek v modalu/lightboxu je generický vzorec `"{titul kategorie} — fotografie N z realizace"`, ne bespoke popis každé z 90 fotek — bylo by nepřiměřeně časově náročné ručně prohlížet a popisovat každou; hlavní fotky (5×) a peek náhledy z první fotky každé kategorie byly vizuálně zkontrolované a mají popisný alt. Zvážit v budoucnu, pokud na tom klientovi/SEO záleží víc.
+- První karta (Dřevěné fasády) je `--featured` (větší, jiný crop) — stejné pravidlo jako u `.reference-grid__item--featured`, aby 5 karet nepůsobilo jako identická šablona (pravidlo 0 v `pravidla.md`).
+- Šířka peeking fotek/hover posunů zmenšena a `.gallery-categories` dostal `overflow-x:hidden` + malý `padding-inline` — první verze s většími zápornými offsety (`right:-4%` apod.) natáčené o 7–9° přetékala přes okraj viewportu na úzkých mobilech (~360px) a způsobovala horizontální scroll stránky. Opraveno zmenšením offsetů na kladné/malé hodnoty a přidáním bezpečnostního ořezu na úrovni gridu.
+- Číslování "others" fotek (`01.jpg…`) odpovídá abecednímu pořazení původních souborů `WhatsApp Image … (N).jpeg` ve zdrojové složce `fotky/`, ne chronologickému pořadí pořízení — pořadí uvnitř kategorie nemá zadáním určený význam.
+
+**Chyba během session (pro příště):** Při úpravě `index.html` (přidání `.gallery-card__photo` wrapperu) došlo omylem k přepsání celého souboru nástrojem Write s placeholder obsahem místo cíleného Edit. Opraveno okamžitě rekonstrukcí souboru z plného obsahu přečteného na začátku session (před úpravou) + opětovnou aplikací zamýšlené změny, ověřeno přes `git diff HEAD` že žádná dřívější necommitnutá práce (přebarvení, sekce Reference) nezmizela. Poučení: pro cílenou strukturální změnu uvnitř existujícího souboru vždy použít Edit, ne Write, i pod tlakem "je to jen malá oprava".
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Ověřeno: `fotky/` (zdrojová složka, 23 MB nezpracovaných originálů) je v gitu ignorovaná přes existující `.gitignore` záznam `Fotky/` (case-insensitive shoda na macOS) — nehrozí, že se dostane do repozitáře. Web reálně používá jen zpracované verze v `assets/img/galerie/`.
+- Alt texty "others" fotek jsou generické (viz výše) — case pro budoucí vylepšení, ne blokující chyba.
+- Předchozí flat/filtrovaná galerie (Interiéry/Fasády/Průmyslové haly) byla nahrazena kategoriemi podle typu práce — pokud klient bude chtít oboje (filtr i kategorie), bude to vyžadovat další rozhodnutí o UX, zatím neřešeno.
+- Beze změny z předchozích session: `RESEND_API_KEY` není nastaven na Vercelu (formulář na produkci neodešle e-mail), dnešní i předchozí změny ještě neprošly nasazením ani schválením klientem, canonical/OG URL pořád `REPLACE-WITH-DOMAIN.cz`, zbytek a11y checklistu (screen reader) neprošel manuálním testem mimo automatizované Playwright kontroly výše.
+- Zjištěno (nesouvisí s galerií, needitováno): `.reference-cta` tlačítko a `.services-grid__item--lead` mírně přetékají přes viewport na velmi úzkých mobilech (~360px, cca 7–14px) — preexistující z minulé session, mimo scope dnešního zadání, zaznamenáno pro budoucí opravu.
+
+**Dotčené soubory:**
+- `index.html` (sekce `#galerie` přepsána — kategorie, modal, rozšířený lightbox)
+- `assets/css/style.css` (sekce "11. Galerie" přepsána)
+- `assets/js/main.js` (`initGallery()` nahrazuje `initGalleryFilters` + starý `initLightbox`)
+- `assets/img/galerie/` (nová struktura `<slug>/main.jpg`, `<slug>/others/NN.jpg`, `<slug>/peek/0N.jpg`; staré `galerie-01…11.jpg` smazány)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (přepsán blok "Aktuální stav")
+- `.claude/memory/pravidla.md` (aktualizován bod 4.6 "Galerie" a sekce 5 "Foto-placeholdery a reálné fotky")
+
+---
+
+## 2026-08-26 — Nová hero fotka (detail rohu dřevěné fasády)
+
+**Fáze projektu po této session:** beze změny fáze, jen výměna hero fotky za novou reálnou fotku dodanou klientem.
+
+**Co bylo uděláno:**
+- Uživatel dodal novou fotku do `fotky/HERO SEKCE /` (detail rohu dřevěné fasády s kovovou lešeňovou tyčí v popředí) a požádal o její nasazení do hero sekce místo dosavadní fotky (malíř na lešení natírající roh stropu).
+- Zdrojová fotka měla nahoře a dole černé pruhy (letterboxing, pravděpodobně screenshot z videa) — ořezáno přes `sips -c` na 739×940 (odstranění pruhů), zmenšeno na dlouhou hranu 920 px, kvalita 82 (odpovídá konvenci `pravidla.md` sekce 5). Výsledek 723×920, ~200 KB, nahrazen do `assets/img/hero.jpg`.
+- `index.html`: `alt` textu u hero `<img>` přepsán na popis nové fotky, `width`/`height` atributy aktualizovány na 723×920.
+- `assets/css/style.css`: komentář u `.hero__media .photo-placeholder--filled img{object-position:50% 50%}` přepsán — dřív popisoval starou fotku (lešení, malíř, strop), teď vysvětluje, proč střed sedí i na novou fotku (rovnoměrná textura dřeva po celé výšce).
+- Vizuálně ověřeno na 390/820/1400px — text čitelný přes scrim, kompozice (diagonální lamely + kovová tyč) funguje dobře jak na úzkém mobilním (téměř portrétním) tak širokém desktopovém (21:9) ořezu beze změny `object-position`.
+
+**Rozhodnutí a proč:**
+- Nová fotka nemá v záběru osobu (na rozdíl od brief-doporučení "malíř při práci / štětec na stěně" v `Varchol-malir-prompt.md` sekce Hero) — jde ale o explicitní, jednoznačný pokyn uživatele s konkrétní reálnou fotkou, ne o obecný placeholder rozhodovaný Claude, takže respektováno bez zpochybňování. Barevně navíc fotka silně ladí s `--primary`/`--accent` paletou webu (dřevěná hnědá/karamelová), takže funguje vizuálně možná i lépe než původní.
+- Ořez černých pruhů řešen centrovaným `sips -c` (ne ruční offset) — pruhy byly vizuálně symetrické (~300 px nahoře/dole z 1600 px), centrovaný ořez je nejjednodušší spolehlivé řešení.
+
+**Dotčené soubory:**
+- `assets/img/hero.jpg` (nahrazena fotka)
+- `index.html` (alt text + width/height u hero img)
+- `assets/css/style.css` (aktualizován komentář u object-position)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (přepsán blok "Aktuální stav")
+
+---

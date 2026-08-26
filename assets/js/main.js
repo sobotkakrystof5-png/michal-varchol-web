@@ -94,63 +94,131 @@
   }
 
   /* ---------------------------------------------------------------------
-   * 3. Galerie — filtr, lightbox
+   * 3. Galerie — kategorie, modal s celou sadou fotek, lightbox s prev/next
    * ------------------------------------------------------------------- */
-  function initGalleryFilters() {
-    var filterButtons = document.querySelectorAll('.gallery-filters .pill[data-filter]');
-    var galleryGrid = document.getElementById('galleryGrid');
-    if (!filterButtons.length || !galleryGrid) return;
+  // Počty fotek v "OTHERS" složce každé kategorie (mimo hlavní fotku) —
+  // musí odpovídat souborům assets/img/galerie/<slug>/others/01.jpg…NN.jpg,
+  // vygenerovaným ze zdrojových fotek ve fotky/.
+  var GALLERY_CATEGORIES = {
+    'drevene-fasady': { othersCount: 23 },
+    'malby-interieru': { othersCount: 22 },
+    'okna-dvere': { othersCount: 22 },
+    'pergoly': { othersCount: 22 },
+    'strikani': { othersCount: 16 }
+  };
 
-    var currentFilter = 'all';
-
-    function applyFilter() {
-      var items = galleryGrid.querySelectorAll('.gallery-item');
-      items.forEach(function (item) {
-        var matches = currentFilter === 'all' || item.dataset.category === currentFilter;
-        item.classList.toggle('is-filtered-out', !matches);
-      });
-    }
-
-    filterButtons.forEach(function (button) {
-      button.addEventListener('click', function () {
-        currentFilter = button.dataset.filter;
-        filterButtons.forEach(function (b) {
-          b.classList.toggle('is-active', b === button);
-        });
-        applyFilter();
-      });
-    });
+  function padNum(n) {
+    return n < 10 ? '0' + n : String(n);
   }
 
-  function initLightbox() {
+  function initGallery() {
+    var cards = document.querySelectorAll('.gallery-card[data-category]');
+    var modal = document.getElementById('categoryModal');
+    var modalTitle = document.getElementById('categoryModalTitle');
+    var modalDesc = document.getElementById('categoryModalDesc');
+    var modalGrid = document.getElementById('categoryModalGrid');
     var lightbox = document.getElementById('lightbox');
     var lightboxBody = document.getElementById('lightboxBody');
-    var galleryGrid = document.getElementById('galleryGrid');
-    if (!lightbox || !lightboxBody) return;
+    var lightboxCounter = document.getElementById('lightboxCounter');
+    if (!cards.length || !modal || !modalGrid || !lightbox || !lightboxBody) return;
 
-    var lastTrigger = null;
+    var currentImages = [];
+    var currentIndex = 0;
+    var modalTrigger = null;
+    var lightboxTrigger = null;
 
-    function getFocusable() {
-      var panel = lightbox.querySelector('.lightbox__panel');
+    function getFocusable(panel) {
       if (!panel) return [];
       return Array.prototype.slice.call(
         panel.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])')
       );
     }
 
-    function openLightbox(item) {
-      var sourceImg = item.querySelector('img');
-
-      lightboxBody.innerHTML = '<img alt="">';
-      var lightboxImg = lightboxBody.querySelector('img');
-      if (sourceImg) {
-        lightboxImg.src = sourceImg.currentSrc || sourceImg.src;
-        lightboxImg.alt = sourceImg.alt || '';
+    function buildImages(slug, title) {
+      var basePath = 'assets/img/galerie/' + slug + '/';
+      var meta = GALLERY_CATEGORIES[slug];
+      var images = [{ src: basePath + 'main.jpg', alt: title + ' — hlavní fotka realizace' }];
+      if (meta) {
+        for (var i = 1; i <= meta.othersCount; i++) {
+          images.push({
+            src: basePath + 'others/' + padNum(i) + '.jpg',
+            alt: title + ' — fotografie ' + (i + 1) + ' z realizace'
+          });
+        }
       }
+      return images;
+    }
 
-      lastTrigger = item;
+    /* ---- Modal kategorie ---- */
+    function openCategoryModal(card) {
+      var slug = card.dataset.category;
+      var title = card.querySelector('.gallery-card__title');
+      var desc = card.querySelector('.gallery-card__desc');
+      title = title ? title.textContent : '';
+      desc = desc ? desc.textContent : '';
+
+      currentImages = buildImages(slug, title);
+      modalTitle.textContent = title;
+      modalDesc.textContent = desc;
+
+      modalGrid.innerHTML = '';
+      currentImages.forEach(function (img, index) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'category-modal__item';
+        btn.dataset.index = String(index);
+        var el = document.createElement('img');
+        el.src = img.src;
+        el.alt = img.alt;
+        el.loading = 'lazy';
+        btn.appendChild(el);
+        modalGrid.appendChild(btn);
+      });
+
+      modalTrigger = card;
+      modal.removeAttribute('hidden');
+      var closeButton = modal.querySelector('.category-modal__close');
+      if (closeButton) closeButton.focus();
+    }
+
+    function closeCategoryModal() {
+      if (modal.hidden) return;
+      modal.setAttribute('hidden', '');
+      modalGrid.innerHTML = '';
+      var trigger = modalTrigger;
+      modalTrigger = null;
+      if (trigger) trigger.focus();
+    }
+
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        openCategoryModal(card);
+      });
+    });
+
+    modal.querySelectorAll('[data-category-close]').forEach(function (el) {
+      el.addEventListener('click', closeCategoryModal);
+    });
+
+    /* ---- Lightbox jedné fotky s prev/next, otevírá se z modalu ---- */
+    function renderLightboxImage() {
+      var img = currentImages[currentIndex];
+      if (!img) return;
+      lightboxBody.innerHTML = '';
+      var el = document.createElement('img');
+      el.src = img.src;
+      el.alt = img.alt;
+      lightboxBody.appendChild(el);
+      if (lightboxCounter) {
+        lightboxCounter.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
+      }
+    }
+
+    function openLightbox(index, trigger) {
+      currentIndex = index;
+      renderLightboxImage();
+      lightboxTrigger = trigger;
       lightbox.removeAttribute('hidden');
-
       var closeButton = lightbox.querySelector('.lightbox__close');
       if (closeButton) closeButton.focus();
     }
@@ -159,35 +227,61 @@
       if (lightbox.hidden) return;
       lightbox.setAttribute('hidden', '');
       lightboxBody.innerHTML = '';
-      var trigger = lastTrigger;
-      lastTrigger = null;
+      var trigger = lightboxTrigger;
+      lightboxTrigger = null;
       if (trigger) trigger.focus();
     }
 
-    if (galleryGrid) {
-      galleryGrid.addEventListener('click', function (event) {
-        var item = event.target.closest('.gallery-item');
-        if (!item || !galleryGrid.contains(item)) return;
-        openLightbox(item);
-      });
+    function stepLightbox(direction) {
+      if (!currentImages.length) return;
+      currentIndex = (currentIndex + direction + currentImages.length) % currentImages.length;
+      renderLightboxImage();
     }
 
-    var closeTriggers = lightbox.querySelectorAll('[data-lightbox-close]');
-    closeTriggers.forEach(function (el) {
-      el.addEventListener('click', closeLightbox);
+    modalGrid.addEventListener('click', function (event) {
+      var item = event.target.closest('.category-modal__item');
+      if (!item) return;
+      openLightbox(Number(item.dataset.index), item);
     });
 
-    // Escape a focus trap fungují jen dokud je lightbox otevřený.
+    lightbox.querySelectorAll('[data-lightbox-close]').forEach(function (el) {
+      el.addEventListener('click', closeLightbox);
+    });
+    var prevButton = lightbox.querySelector('[data-lightbox-prev]');
+    var nextButton = lightbox.querySelector('[data-lightbox-next]');
+    if (prevButton) prevButton.addEventListener('click', function () { stepLightbox(-1); });
+    if (nextButton) nextButton.addEventListener('click', function () { stepLightbox(1); });
+
+    // Escape zavírá nejdřív lightbox (je nad modalem), pak až modal kategorie.
+    // Focus trap se aplikuje jen na tu vrstvu, která je zrovna otevřená.
     document.addEventListener('keydown', function (event) {
-      if (lightbox.hidden) return;
+      var lightboxOpen = !lightbox.hidden;
+      var modalOpen = !modal.hidden;
+      if (!lightboxOpen && !modalOpen) return;
 
       if (event.key === 'Escape') {
-        closeLightbox();
+        if (lightboxOpen) {
+          closeLightbox();
+        } else {
+          closeCategoryModal();
+        }
+        return;
+      }
+
+      if (lightboxOpen && event.key === 'ArrowLeft') {
+        stepLightbox(-1);
+        return;
+      }
+      if (lightboxOpen && event.key === 'ArrowRight') {
+        stepLightbox(1);
         return;
       }
 
       if (event.key === 'Tab') {
-        var focusable = getFocusable();
+        var panel = lightboxOpen
+          ? lightbox.querySelector('.lightbox__panel')
+          : modal.querySelector('.category-modal__panel');
+        var focusable = getFocusable(panel);
         if (!focusable.length) return;
         var first = focusable[0];
         var last = focusable[focusable.length - 1];
@@ -328,8 +422,7 @@
   function init() {
     initNav();
     initScrollspy();
-    initGalleryFilters();
-    initLightbox();
+    initGallery();
     initContactForm();
     initFooterYear();
   }

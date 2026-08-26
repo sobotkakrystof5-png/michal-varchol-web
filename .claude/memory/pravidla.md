@@ -39,14 +39,14 @@ Toto pravidlo převažuje nad vším ostatním v tomto dokumentu. Před dokonče
 
 ## 3. Design systém
 
-- **Primární barva:** tlumená zemitá (teplá šedá/greige nebo tlumený petrol) — ne korporátní modrá.
-- **Pozadí:** teplá bílá/krémová, ne čistě bílá.
-- **Text:** tmavá odstínová verze primární barvy, ne čistě černá.
-- **Accent:** max 1 tlumená doplňková barva, max 2-3 odstíny celkem, žádná duha. Poměr cca 80-85 % neutrální plocha / zbytek accent. Accent nesmí zabírat velké plochy.
-- Kontrast text/pozadí min. WCAG AA pro každou kombinaci.
+- **Primární barva:** teplá tlumená dřevěná hnědá (`--primary:#6B4630`, tmavší `--primary-dark:#472C1D`) — inspirovaná fotkou luxusního dřevěného interiéru (trámový strop, ořechový obklad, lněný textil), kterou 2026-08-24 klient dodal jako referenci. **Petrolová/modro-zelená varianta (`#3F5A54`/`#2E4440`) byla klientem výslovně zamítnuta** ("nechce takovou tu modro zelenou") — nepoužívat ji ani jako alternativu.
+- **Pozadí:** teplá krémová (`--bg:#FAF6EF`, `--bg-alt:#F1E9DB`) — o odstín světlejší než původní návrh, klient si výslovně přál "světlejší web". Ne čistě bílá.
+- **Text:** tmavá ořechová/espresso hnědá (`--fg:#2E241C`), tlumená teplá hnědá pro sekundární text (`--muted:#6B5A48`) — ne čistě černá.
+- **Accent:** medová/karamelová dřevní hnědá (`--accent:#BF8038`) a tlumená olivově-taupe (`--accent-2:#96906C`, záměrně posunuto od zelenější `#8CA173`, aby to nečetlo jako "zelená"). Poměr cca 80-85 % neutrální plocha / zbytek accent, accent nesmí zabírat velké plochy.
+- Kontrast text/pozadí min. WCAG AA pro každou kombinaci — u nové palety ověřeno výpočtem (text na `--primary` tlačítku ~7,9:1, `--error-text:#B23B1F` vůči pozadí ~5,5:1 a zůstává barevně jasně odlišitelný od hnědého primary, aby chybové stavy nesplývaly s brandem).
 - **Nadpisy:** výrazné písmo s charakterem (např. Fraunces, Sora, Inter s doladěným trackingem), ne systémový default.
 - **Text:** čitelné sans-serif s dobrým řádkováním.
-- CSS proměnné jako otevřené placeholdery (`--bg, --fg, --muted, --accent, --accent-fg, --font-heading, --font-body`), dokud není finální paleta potvrzená.
+- Paleta je od 2026-08-24 zamčená na konkrétní hex hodnoty výše (viz `assets/css/style.css` `:root`) na základě přímého zadání klienta — přestala být otevřeným placeholderem, i když klient tuto konkrétní podobu ještě naživo neviděl (chybí finální vizuální schválení nasazené verze).
 - Logo: klient zatím nedodal — jednoduchý textový wordmark ("Malířské práce Litoměřice" nebo "M. Varchol"), bez ikon-klišé (žádný váleček s kapkou barvy). Nechat prostor pro budoucí náhradu skutečným logem.
 
 ## 4. Struktura stránky (pořadí a komponenty)
@@ -54,23 +54,23 @@ Toto pravidlo převažuje nad vším ostatním v tomto dokumentu. Před dokonče
 Reference: `.claude/Antos-simple-site-skill.md` (jednostránková řemeslnická šablona).
 
 1. **Header** (sticky) — skip-to-content link jako první DOM element (viditelný jen na focus) → wordmark vlevo (link na hero) → anchor nav (O mně / Služby / Galerie / Kontakt) → 1 primární CTA vpravo ("Nezávazná poptávka" → kontakt). Mobil: hamburger/off-canvas se stejnými odkazy.
-2. **Hero** — full-bleed foto-placeholder, konkrétní H1 (ne generický claim), 1řádkový podnadpis, 2 CTA asymetricky rozmístěná (primární "Poptat práci" → kontakt, sekundární "Prohlédnout práce" → galerie), 2položkový stat strip ("[X] let zkušeností" placeholder · "Litoměřice a okolí do 30 km").
+2. **Hero** — full-bleed foto-placeholder, konkrétní H1 (ne generický claim), 1řádkový podnadpis, 2 CTA asymetricky rozmístěná (primární "Poptat práci" → kontakt, sekundární "Prohlédnout práce" → galerie), 2položkový stat strip ("[X] let zkušeností" placeholder · "Litoměřice a okolí do 30 km"). Od 2026-08-24 je textový blok (nadpis/podnadpis/CTA) zarovnaný vlevo ke stejné hraně jako obsah ostatních sekcí místo centrovaného 640px boxu — `.hero__content` počítá `margin-left` z `--container`/`--gutter` místo aby nesl třídu `.container` s `margin-inline:auto`.
 3. **O mně** (`#o-nas`) — H2 + víceodstavcový text → 4položkový value-prop grid (ikona + titulek + 1 řádek popisu, vlastní kompoziční logika, ne 4 identické karty; na mobilu 2×2) → 1 doprovodná fotka.
 4. **Služby** (`#sluzby`) — H2 + grid textových karet bez obrázků a bez CTA na kartě: Malířské práce (interiéry) · Lakýrnické práce · Fasádní nátěry · Velkoplošné stříkání hal.
-5. **Galerie** (`#galerie`) — H2 + filtrovací pilulky (Interiéry / Fasády / Průmyslové haly) → grid fotek-placeholderů → "Zobrazit celou galerii" řešit jako lightbox/expand in-page, ne samostatná route.
-6. **Kontakt** (`#kontakt`) — H2 + úvodní řádek → dvousloupcový layout: (a) kontaktní údaje (adresa, telefon, e-mail) + tlačítka volat/e-mail + mapa; (b) formulář (jméno, e-mail, telefon, zpráva) s inline validací (hint text trvale pod povinnými poli, ne jen při chybě) a honeypot polem (skryté, `tabindex="-1"`, `autocomplete="off"`).
-7. **Footer** — wordmark → řádek IČO/DIČ (placeholder) → "Rychlé odkazy" zrcadlící header nav → kontaktní seznam → copyright.
+5. **Reference** (`#reference`) — od 2026-08-24. H2 + úvodní věta → asymetrický grid citací z Firmy.cz (1 `--featured` širší karta + menší karty, ne identické 3-card grid) → odkaz "Zobrazit všechny reference na Firmy.cz" (`target="_blank"`) na skutečný profil `https://www.firmy.cz/detail/13509932-michal-varchol-litomerice-predmesti.html`. Recenze se přebírají doslovně (jméno, datum, citace beze změny) — stejné pravidlo "nic nevymýšlet" jako u faktů v sekci 1, jen aplikované na citace třetích osob. Viz `memory.md` záznam "Nová sekce Reference".
+6. **Galerie** (`#galerie`) — od 2026-08-26. H2 + úvodní věta → `.gallery-categories` (5 klikatelných karet podle typu práce: Dřevěné fasády *(featured)*, Malby interiérů, Okna a dveře, Renovace dřevěných pergol, Stříkání), každá s hlavní fotkou a 2–3 dekorativními náhledy vykukujícími zpoza ní (`.gallery-card__peek`, `aria-hidden`) → klik na kartu otevírá modal se všemi fotkami té kategorie → klik na fotku v modalu otevírá lightbox s prev/next navigací a čítačem. Žádná samostatná route, vše in-page. Nahrazuje starší flat grid s filtrovacími pilulkami (Interiéry/Fasády/Průmyslové haly) — ten byl kompletně odstraněn, ne jen skrytý.
+7. **Kontakt** (`#kontakt`) — H2 + úvodní řádek → dvousloupcový layout: (a) kontaktní údaje (adresa, telefon, e-mail) + tlačítka volat/e-mail + mapa; (b) formulář (jméno, e-mail, telefon, zpráva) s inline validací (hint text trvale pod povinnými poli, ne jen při chybě) a honeypot polem (skryté, `tabindex="-1"`, `autocomplete="off"`).
+8. **Footer** — wordmark → řádek IČO/DIČ (placeholder) → "Rychlé odkazy" zrcadlící header nav → kontaktní seznam → copyright.
 
 **Konvence:** přesně jeden primární (filled) a jeden sekundární (outline) CTA styl v celé stránce, žádná další variace. Žádné dropdowny/utility bar/search v navigaci. Žádný číslovaný "index" motiv.
 
 ## 5. Foto-placeholdery a reálné fotky
 
 - Dokud klient nedodá fotky pro nový slot: žádné stock/externí fotky jako výplň, jen prázdný placeholder (přerušovaný okraj, neutrální pozadí, ikona fotoaparátu, popisek co tam patří), s finálním `aspect-ratio` nastaveným předem.
-- **Od 2026-08-17 jsou všechny fotoslot na stránce obsazené reálnými fotkami klienta** (1× hero, 1× O mně, 11× galerie) — prázdný stav `.photo-placeholder` (bez `--filled`) se aktuálně nikde na stránce nepoužívá, ale zůstává v CSS jako připravený vzor pro jakýkoli budoucí nový fotoslot bez fotky (např. nová sekce).
+- **Od 2026-08-17 jsou hlavní fotoslot na stránce obsazené reálnými fotkami klienta** (1× hero, 1× O mně) — prázdný stav `.photo-placeholder` (bez `--filled`) se aktuálně nikde na stránce nepoužívá, ale zůstává v CSS jako připravený vzor pro jakýkoli budoucí nový fotoslot bez fotky (např. nová sekce).
 - Zaplněný placeholder = modifier `.photo-placeholder--filled` na stejném `<figure class="photo-placeholder photo-placeholder--{varianta}">` — nahrazuje ikonu+figcaption za `<img>` vyplňující rámeček (`object-fit:cover`), masking-tape rohy zůstávají (kromě hero, kde je fotka full-bleed bez rámečku).
-- Aspect-ratio: hero `21/9` (desktop) s `object-position` doladěným na konkrétní fotku, O mně `4/5`, galerie `3/4` (změněno z původního `4/3` — reálné fotky od klienta jsou většinou na výšku, `3/4` sedí mnohem líp a ořeže minimum).
-- Galerie: aktuálně 11 fotek, všechny zobrazené najednou (žádné tlačítko "Zobrazit více/méně" — bylo odstraněno, viz `memory.md`). Filtr Interiéry/Fasády/Průmyslové haly zůstává funkční přes `data-category`, i když rozdělení mezi kategoriemi není a nemusí být rovnoměrné (odráží to, co klient reálně dodal).
-- Každá galerijní fotka má `data-caption` (1 věta popisující, co je na fotce vidět — zobrazí se v lightboxu po rozkliknutí) a `alt` (kratší, doslovnější popis pro čtečky). Lightbox teď zobrazuje fotku v původním poměru stran beze zkreslení (žádný vynucený `aspect-ratio`, jen `max-height:70vh`), ne oříznutou verzi z gridu.
+- Aspect-ratio: hero `21/9` (desktop) s `object-position` doladěným na konkrétní fotku, O mně `4/5`.
+- **Galerie (od 2026-08-26):** 5 kategorií (110 fotek celkem, viz `pravidla.md` sekce 4 bod 6 a `memory.md`), zdrojové fotky zpracované přes `sips` do `assets/img/galerie/<slug>/{main.jpg, others/NN.jpg, peek/0N.jpg}`. Karty používají vlastní `.gallery-card__peek`/`.gallery-card__main` motiv (ne obecný `.photo-placeholder`), ale zachovávají stejné masking-tape rohy pro vizuální konzistenci se zbytkem webu. Počty "others" fotek jsou napevno v `GALLERY_CATEGORIES` v `assets/js/main.js` — při přidání/odebrání fotky v `assets/img/galerie/<slug>/others/` je nutné ručně přečíslovat soubory a upravit `othersCount` i text "N fotek" na kartě v `index.html`.
 - Nové/nahrazené fotky vždy zpracovat přes `sips` (macOS) do optimalizovaného JPEG (kvalita ~82) místo použití zdrojového PNG přímo — viz `memory.md` záznam 2026-08-17 pro konkrétní úsporu (~80 %).
 
 ## 6. Kontaktní formulář — funkční požadavky
