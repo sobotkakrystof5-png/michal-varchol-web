@@ -389,3 +389,28 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (přepsán blok "Aktuální stav")
 
 ---
+
+## 2026-08-26 — Commit + push + nasazení na produkci
+
+**Fáze projektu po této session:** **Produkce (https://michal-varchol-web.vercel.app) teď odpovídá dnešnímu stavu** — přebarvení, sekce Reference, nová galerie s kategoriemi i nová hero fotka jsou živé. Na žádost uživatele ("push na github a deploy na vercel").
+
+**Co bylo uděláno:**
+- Veškerá dosud necommitnutá práce (od 2026-08-24 přebarvení/Reference sekce + dnešní galerie a hero fotka) staged přes `git add -A` s explicitní výjimkou `fotky/`/`Fotky/` (zdrojové fotky, gitignored, nepatří do repa) a commitnuta jedním commitem (143 souborů, 907+/237- řádků + 143 image souborů).
+- Push na `origin main` (GitHub `sobotkakrystof5-png/michal-varchol-web`) proběhl bez konfliktů (fast-forward `e524b25..723e1d1`).
+- Nasazení na Vercel přes `vercel --prod --yes` (projekt už byl lokálně linknutý přes `.vercel/project.json`, přihlášení `sobotkakrystof5-png` ověřeno). Deployment proběhl a byl automaticky aliasován na produkční doménu `michal-varchol-web.vercel.app` (Vercel CLI vypsalo `▲ Aliased`).
+- Ověřeno curlem, že produkce reálně servíruje nový obsah (`gallery-categories`, "Dřevěné fasády", nová hero fotka) a že klíčové assety (`hero.jpg`, `assets/img/galerie/drevene-fasady/main.jpg`, `style.css`, `main.js`) vrací 200.
+
+**Rozhodnutí a proč:**
+- Deploy proveden bez čekání na vizuální schválení klientem, protože o to uživatel (ne koncový klient Michal) explicitně požádal přímým příkazem — ale connect kontaktního formuláře zůstává nefunkční (viz mezera níže), takže než se web ukáže klientovi/sdílí dál, je potřeba to vyřešit.
+- Nasazení proběhlo přes `vercel --prod` (CLI), ne čekáním na případnou GitHub-integraci auto-deploy — z předchozích session bylo zjevné, že samotný `git push` produkci sám neaktualizuje (projekt byl 4 dny neaktualizovaný i přes mezitímní commity), takže explicitní deploy krok je nutný pokaždé.
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- **Kontaktní formulář na nově nasazené produkci pořád neodešle e-mail** — `RESEND_API_KEY` stále není nastaven v Environment Variables na Vercelu (nekontrolováno/nezměněno v této session, jen znovu potvrzeno jako existující mezera). Nejvyšší priorita, než se web ukáže klientovi jako hotový.
+- Klient (Michal Varchol) dosud neviděl a neschválil nic z toho, co je teď na produkci (přebarvení, Reference, nová galerie, nová hero fotka) — nasazení proběhlo na žádost uživatele (vývojář/agentura), ne jako signál, že je to hotové ke schválení klientem.
+
+**Dotčené soubory:**
+- Commit `723e1d1` na `main` (viz `git log`) — obsahuje všechny soubory zmíněné ve dvou předchozích záznamech.
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (přepsán blok "Aktuální stav")
+
+---
