@@ -414,3 +414,44 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (přepsán blok "Aktuální stav")
 
 ---
+
+## 2026-08-27 — Přebarvení: hnědá → antracitová + teakové dřevo
+
+**Fáze projektu po této session:** Kód změněn a vizuálně ověřen lokálně, **necommitnuto, nepushnuto, nenasazeno**. Produkce (`michal-varchol-web.vercel.app`) stále servíruje starou hnědou paletu.
+
+**Co bylo uděláno:**
+- Uživatel požádal o změnu barevného motivu z "hnědá + bílá" na "antracitová (podklad) + teakové dřevo". Vzhledem k nejednoznačnosti (plně tmavý web vs. antracit jen jako primární barva vs. kombinace) položena `AskUserQuestion` se třemi konkrétními variantami (hex náhledy) — uživatel zvolil **"antracit jako primární, světlé pozadí zůstává"** (nejbližší 1:1 náhrada dřívějšího hnědého schématu).
+- Upraveny design tokeny v `assets/css/style.css` `:root`: `--fg` (`#2E241C`→`#24272B`), `--muted` (`#6B5A48`→`#5C5F63`), `--primary` (`#6B4630`→`#2E3237`), `--primary-dark` (`#472C1D`→`#17191C`), `--accent` (`#BF8038`→`#8B5E3C`, teak), `--accent-2` (`#96906C`→`#C39A66`, světlejší teak). `--bg`, `--bg-alt`, `--line`, `--accent-fg`, `--error-text` beze změny.
+- Dohledány a přepočítány i natvrdo zapsané `rgba(46,36,28,…)` hodnoty (odvozené z dřívějšího `--fg`) v hero scrim, tape stínech, modal/lightbox backdropu → nahrazeny `rgba(36,39,43,…)` (nová `--fg` v RGB). Ověřeno grepem, že v CSS ani `index.html`/`main.js` nezůstal žádný starý hex hnědé/zlaté palety natvrdo zapsaný mimo proměnné.
+- Vizuálně ověřeno přes headless Playwright (`npx playwright`, port 51837 — pozor, port 8934 byl už obsazený úplně jiným, nesouvisejícím projektem "Masáže Tomáš Kestner" běžícím lokálně na stejném stroji, takže první pokus omylem screenshotoval cizí web; opraveno použitím volného portu a ověřením obsahu přes `grep "Varchol"` před screenshotováním). Screenshoty hero/o mně/služby/galerie/reference/kontakt/patičky — vše čitelné, bez console chyb (`console --errors` prázdné).
+
+**Rozhodnutí a proč:**
+- Zvolena "light-kept" varianta (ne plně tmavý web), protože uživatel ji přímo vybral z nabídnutých náhledů — nejnižší riziko, nejbližší dosavadnímu vzhledu, zachovává čitelnost dlouhého textu na světlém pozadí.
+- **Důležitá kolize zjištěna, nahlášena uživateli, ale ne blokující:** dřívější hnědá paleta byla 2026-08-24 klientem (Michal Varchol) explicitně "zamčená" na základě jím dodané referenční fotky dřevěného interiéru (viz `pravidla.md` do této session). Antracit+teak tuto fotoreferenci nerespektuje. Uživatel (vývojář/agentura) o změnu požádal přímo, takže provedeno, ale klient tuto novou verzi **neviděl ani neschválil** — stejně jako zbytek toho, co už je na produkci živé.
+- `pravidla.md` sekce 3 (Design systém) přepsána tak, aby odrážela novou paletu a zaznamenala historii obou zamčení (hnědá 08-24 → antracit+teak 08-27), včetně poznámky, že dřívější zamítnutí petrolové/modro-zelené barvy klientem se týkalo jiného odstínu, ale stojí za připomenutí při příští komunikaci s klientem.
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Odsouhlasí klient Michal Varchol novou antracit+teak paletu, nebo trvá na dřívější hnědé podle jím dodané fotoreference? Zatím neprezentováno.
+- Zbytek otevřených otázek (rok založení, logo, DIČ, doména, RESEND_API_KEY) beze změny — viz `index.md`.
+
+**Dotčené soubory:**
+- `assets/css/style.css` (design tokeny + natvrdo zapsané rgba stíny/overlaye)
+- `.claude/memory/pravidla.md` (sekce 3 — Design systém, přepsána)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (přepsán blok "Aktuální stav")
+
+---
+
+## 2026-08-28 — Odstranění vysvětlující věty ze sekce Reference
+
+**Fáze projektu po této session:** Beze změny (viz předchozí záznam) — jen drobná textová úprava navrch necommitnutých lokálních změn (antracit+teak paleta, hero foto).
+
+**Co bylo uděláno:**
+- Na žádost uživatele odstraněna úvodní věta sekce Reference: „Recenze nepíšu já, nechávám je zákazníkům přímo na Firmy.cz. Profil tam má aktuálně hodnocení „Fantastické" a 27 recenzí. Pár z nich je i tady, zbytek najdete na odkazu níže." Tlačítko „Zobrazit všechny reference na Firmy.cz" pod recenzemi zůstalo beze změny.
+
+**Dotčené soubory:**
+- `index.html` (odstraněn `<p class="section-intro">` v sekci `#reference`)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (aktualizován popis lokálních necommitnutých změn)
+
+---
