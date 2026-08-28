@@ -455,3 +455,26 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (aktualizován popis lokálních necommitnutých změn)
 
 ---
+
+## 2026-08-28 — Push antracit+teak palety na produkci
+
+**Fáze projektu po této session:** Produkce (**https://michal-varchol-web.vercel.app**) teď běží s NOVOU antracit+teak paletou, novým hero fotem a upravenou sekcí Reference — commit `9ad7da5`, deploy `READY` (auto-deploy z GitHub push).
+
+**Co bylo uděláno:**
+- Uživatel požádal "push celý projekt na github a deploy na vercel". Před provedením upozorněno, že necommitnutá antracit+teak paleta (viz session 2026-08-27) nebyla klientem schválena a přepisuje dřívější klientem explicitně zamčenou hnědou paletu — uživatel přes `AskUserQuestion` zvolil zahrnout a nasadit i tuto paletu.
+- Commitnuty všechny necommitnuté změny (`style.css` paleta, `assets/img/hero.jpg`, odstranění věty v sekci Reference, memory soubory) jako `9ad7da5`, pushnuto na `origin/main`.
+- Vercel projekt `michal-varchol-web` je napojený na GitHub repo (git integrace) — push na `main` automaticky spustil produkční deploy, ověřeno přes Vercel MCP (`list_deployments`) jako `state: READY`, `target: production`.
+
+**Rozhodnutí a proč:**
+- Paleta nasazena bez klientova schválení, protože uživatel (vývojář/agentura) to po upozornění explicitně zvolil jako preferovanou variantu.
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Michal Varchol dosud neviděl a neschválil ani novou antracit+teak paletu, ani cokoliv jiného na produkci — nutno ukázat a získat zpětnou vazbu, riziko že bude chtít vrátit k původní hnědé.
+- Ostatní dříve otevřené otázky (rok založení, logo, DIČ, skutečná doména, `RESEND_API_KEY`) trvají beze změny.
+
+**Dotčené soubory:**
+- Push zahrnul: `index.html`, `assets/css/style.css`, `assets/img/hero.jpg`, `.claude/memory/index.md`, `.claude/memory/memory.md`, `.claude/memory/pravidla.md`
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
+
+---
