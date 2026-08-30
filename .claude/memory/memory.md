@@ -478,3 +478,30 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
 
 ---
+
+## 2026-08-30 — Zesvětlení hero fota (zpětná vazba od klienta)
+
+**Fáze projektu po této session:** Produkce beze změny (stále commit `9ad7da5`, paleta/hero foto/Reference sekce z 2026-08-28). Tato úprava je zatím jen lokální, necommitnutá.
+
+**Co bylo uděláno:**
+- Uživatel tlumočil zpětnou vazbu **od klienta Michala Varchola**, že hero fotka na produkci působí "vybledlá"/moc tmavá. To je nová informace: **klient tedy již viděl živou produkci** (dřív otevřená otázka — zda ji vůbec viděl).
+- Zdrojem tmavosti nebyl filtr na obrázku (žádný `filter`/`brightness` na `<img>`), ale `.hero__scrim` gradient overlay v `assets/css/style.css` (`~L409`): `linear-gradient(180deg, rgba(36,39,43,.15), rgba(36,39,43,.72))`.
+- Sníženo na `rgba(36,39,43,.05)` nahoře / `rgba(36,39,43,.5)` dole — nechal jsem větší tmavost dole zachovanou (byť nižší), protože `.hero__title`/`.hero__subtitle`/`.hero__actions` (bílý text/tlačítka) na spodní části scrimu závisí na kontrastu.
+- Ověřeno vizuálně (headless Playwright screenshot hero sekce, port 8099, `console --errors` prázdné) — foto výrazně světlejší a teplejší, nadpis/podnadpis/tlačítka čitelné i přes světlejší levou (dřevěnou) stranu fota.
+
+**Rozhodnutí a proč:**
+- Neupraveny žádné jiné vlastnosti obrázku (jas/kontrast/filter) — jediný zdroj tmavosti byl scrim, takže stačila úprava jeho alfa hodnot.
+- Ponechána nenulová tmavost dole (`.5`, ne úplně pryč), aby zůstal dostatečný kontrast pro bílý text/CTA — čistě vizuální odhad z brief požadavku na "zesvětlit, ať není tak tmavý", ne přesný WCAG výpočet (finální fotka je zatím reálná, ne placeholder, ale klient stále nic oficiálně neschválil).
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Tuto úpravu je potřeba nasadit (commit + push), pokud ji uživatel/klient odsouhlasí — zatím jen lokální change.
+- Zbytek dřív otevřených otázek (schválení antracit+teak palety, rok založení, logo, DIČ, doména, `RESEND_API_KEY` na Vercelu) trvá beze změny — ale nově víme, že klient produkci aktivně sleduje a dává zpětnou vazbu, takže je vhodná chvíle vyžádat si od něj i zbytek chybějících faktů a schválení palety najednou.
+
+**Dotčené soubory:**
+- `assets/css/style.css` (`.hero__scrim` alfa hodnoty)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
+
+**Poznámka:** při přípravě pushe (viz další záznam níže) byl v `index.html` nalezen ještě jeden necommitnutý, touto session neprovedený edit — rozšířený text `.hero__subtitle` (přidána zmínka o lakýrnických pracích, renovaci dveří/zárubní/oken). Pravděpodobně ruční úprava uživatele přímo v IDE mezi sezeními. Obsahově neodporuje briefu, zahrnuto do pushe beze změny.
+
+---

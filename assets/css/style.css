@@ -409,7 +409,7 @@ h3{
 .hero__scrim{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(36,39,43,.15), rgba(36,39,43,.72));
+  background:linear-gradient(180deg, rgba(36,39,43,.05), rgba(36,39,43,.5));
 }
 
 .hero__content{
