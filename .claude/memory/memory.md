@@ -481,7 +481,7 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 
 ## 2026-08-30 — Zesvětlení hero fota (zpětná vazba od klienta)
 
-**Fáze projektu po této session:** Produkce beze změny (stále commit `9ad7da5`, paleta/hero foto/Reference sekce z 2026-08-28). Tato úprava je zatím jen lokální, necommitnutá.
+**Fáze projektu po této session:** Produkce (**https://michal-varchol-web.vercel.app**, commit `bb23b25`, Vercel deploy `dpl_GfVCZ58jPx5nXsW38EW4eJjqseFR` READY) běží se zesvětleným hero scrim overlayem a rozšířeným hero podnadpisem, navrch dřívější antracit+teak palety/hero foto/Reference sekce z 2026-08-28.
 
 **Co bylo uděláno:**
 - Uživatel tlumočil zpětnou vazbu **od klienta Michala Varchola**, že hero fotka na produkci působí "vybledlá"/moc tmavá. To je nová informace: **klient tedy již viděl živou produkci** (dřív otevřená otázka — zda ji vůbec viděl).
@@ -493,15 +493,16 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - Neupraveny žádné jiné vlastnosti obrázku (jas/kontrast/filter) — jediný zdroj tmavosti byl scrim, takže stačila úprava jeho alfa hodnot.
 - Ponechána nenulová tmavost dole (`.5`, ne úplně pryč), aby zůstal dostatečný kontrast pro bílý text/CTA — čistě vizuální odhad z brief požadavku na "zesvětlit, ať není tak tmavý", ne přesný WCAG výpočet (finální fotka je zatím reálná, ne placeholder, ale klient stále nic oficiálně neschválil).
 
+**Nasazení:** uživatel následně požádal "pushni na githu a deploy na vercel". Před pushem nalezen v `index.html` ještě jeden necommitnutý, touto session neprovedený edit — rozšířený text `.hero__subtitle` (přidána zmínka o lakýrnických pracích, renovaci dveří/zárubní/oken). Pravděpodobně ruční úprava uživatele přímo v IDE mezi sezeními. Obsahově neodporuje briefu, zahrnuto do commitu beze změny. Commitnuto jako `bb23b25`, pushnuto na `origin/main`, Vercel git-integrace spustila auto-deploy, ověřeno přes Vercel MCP (`list_deployments`) jako `dpl_GfVCZ58jPx5nXsW38EW4eJjqseFR`, `state: READY`, `target: production`.
+
 **Otevřené otázky (čeká na klienta/uživatele):**
-- Tuto úpravu je potřeba nasadit (commit + push), pokud ji uživatel/klient odsouhlasí — zatím jen lokální change.
+- Potvrdí klient, že zesvětlené hero foto teď odpovídá tomu, co chtěl?
 - Zbytek dřív otevřených otázek (schválení antracit+teak palety, rok založení, logo, DIČ, doména, `RESEND_API_KEY` na Vercelu) trvá beze změny — ale nově víme, že klient produkci aktivně sleduje a dává zpětnou vazbu, takže je vhodná chvíle vyžádat si od něj i zbytek chybějících faktů a schválení palety najednou.
 
 **Dotčené soubory:**
 - `assets/css/style.css` (`.hero__scrim` alfa hodnoty)
+- `index.html` (rozšířený `.hero__subtitle` text, edit mimo tuto session)
 - `.claude/memory/memory.md` (tento záznam)
 - `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
-
-**Poznámka:** při přípravě pushe (viz další záznam níže) byl v `index.html` nalezen ještě jeden necommitnutý, touto session neprovedený edit — rozšířený text `.hero__subtitle` (přidána zmínka o lakýrnických pracích, renovaci dveří/zárubní/oken). Pravděpodobně ruční úprava uživatele přímo v IDE mezi sezeními. Obsahově neodporuje briefu, zahrnuto do pushe beze změny.
 
 ---
