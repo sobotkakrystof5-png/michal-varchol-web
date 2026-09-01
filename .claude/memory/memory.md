@@ -506,3 +506,37 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
 
 ---
+
+## 2026-09-01 — Hero: "více zlata a prémiového dojmu" (zpětná vazba od klienta)
+
+**Fáze projektu po této session:** Produkce (**https://michal-varchol-web.vercel.app**, poslední nasazený commit `bb23b25`) zatím NEODPOVÍDÁ pracovnímu stromu — tato session udělala kód, ale needeployla ho (uživatel o deploy nepožádal). Změny jsou jen lokální, needitované, needeploynuté.
+
+**Co bylo uděláno:**
+- Uživatel tlumočil zpětnou vazbu od klienta Michala Varchola: hero fotka má působit "více zlatě" a "prémiověji". Zadání bylo záměrně vágní, proto přes `AskUserQuestion` upřesněno na: (a) mechanismus = **oboje** (prohřátí scrim overlaye + přidání zlatých UI detailů), (b) rozsah = **jen hero sekce**, klientova zpětná vazba.
+- `.hero__scrim` (`assets/css/style.css` ~L409) přebarven z neutrální antracitové (`rgba(36,39,43,...)`) na teplou bronzově-zlatou (`rgba(58,38,14,.10)` nahoře / `rgba(32,20,8,.62)` dole) — stejný mechanismus jako zesvětlení z 2026-08-30, jen posunutý odstín místo jasu.
+- Přidán nový `.hero__glow` element (radiální zlatý "bloom" v levém horním rohu fotky, `mix-blend-mode:soft-light`) — zesiluje existující teplé bodové osvětlení na dřevěné stěně na fotce, místo plochého tónování celého snímku.
+- Přidán `.hero__marker` — hero-specifická varianta existujícího motivu `.section-marker` (paint-swatch chipy použité jinde na stránce, např. `#o-nas`), ale ve zlatých odstínech (`#8A6A2A`/`#D9B45B`/`#F0D48A`) nad H1. Vědomě navázáno na existující vizuální motiv webu místo vymýšlení nového "luxusního" prvku, který by kolidoval s pravidlem 0 (no AI-template look).
+- `.hero__stats .stat-strip__num` (čísla "20+"/"30 km" ve stat-strip kartě pod hero fotem) přebarvena na zlatou (`#A9812F`), scoped jen na hero variantu — `.stat-strip__num` mimo hero (pokud by se v budoucnu použil jinde) zůstává beze změny na `--primary-dark`.
+- `.hero__actions .btn--primary` (tlačítko "Poptat práci") dostalo tenký zlatý prstenec (`box-shadow` ring, zesílený na hover) — scoped selektorem jen na hero, globální `.btn--primary` použité jinde na stránce beze změny.
+- Ověřeno vizuálně přes headless Chrome (desktop ~1316px i mobil ~500px šířky): žádné console chyby, žádný horizontální overflow (`scrollWidth - innerWidth === 0` při 500px), hover stav tlačítka funguje, kontrast bílého textu na scrimu vypadá zachovaný i po prohřátí odstínu.
+
+**Rozhodnutí a proč:**
+- Zlatý akcent NENÍ zaveden jako nový globální design token (`--accent`/`--accent-2` beze změny) — zůstává lokální jen v hero-scoped selektorech (`.hero__marker-chip--N`, `.hero__stats .stat-strip__num`, `.hero__actions .btn--primary`), protože uživatel explicitně zvolil "jen hero" a protože minulá neschválená změna globální palety (antracit+teak, 2026-08-27) už jednou způsobila komplikaci s klientovým formálním schválením — nechci stejnou chybu zopakovat na další barvě.
+- Zvolen přístup "prohřát scrim + zesílit existující světla v snímku" místo CSS filtru (`sepia`/`saturate`) na `<img>` — filtr by posunul i barvy nábytku/zdi rovnoměrně a mohl by vypadat jako "instagramový" filtr; cílený radiální `soft-light` bloom nad existujícím bodovým osvětlením působí jako vlastnost fotky, ne jako vrstva navrch.
+- Zlatý paint-swatch marker nad H1 zvolen namísto generické zlaté linky/rámečku, protože rhymuje s už zavedeným motivem webu (`.section-marker` chipy) — splňuje pravidlo 0 ("nevymýšlet nový vizuální jazyk, opakovat 1-2 existující motivy konzistentně").
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Potvrdí klient Michal, že tato "zlatější/prémiovější" verze hero sekce odpovídá tomu, co chtěl, než se nasadí na produkci?
+- Zbytek dříve otevřených otázek beze změny (schválení antracit+teak palety, rok založení, logo, DIČ, doména, `RESEND_API_KEY` na Vercelu) — tato session je přidává, neřeší.
+- Uživatel zatím nepožádal o commit/push/deploy této změny — čeká se, jestli/kdy to bude chtít.
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Změna zatím jen lokálně v pracovním stromu, needeployná na produkci — `index.md` "Aktuální stav" teď musí rozlišovat "co běží na produkci" (`bb23b25`) od "co je rozpracované lokálně" (tato session).
+
+**Dotčené soubory:**
+- `assets/css/style.css` (`.hero__scrim`, nový `.hero__glow`, nový `.hero__marker`/`.hero__marker-chip`, `.hero__actions .btn--primary` box-shadow, `.hero__stats .stat-strip__num`)
+- `index.html` (nový `<div class="hero__glow">` a `.hero__marker` se třemi chipy uvnitř `.hero__content`)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
+
+---

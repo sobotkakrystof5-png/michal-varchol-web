@@ -406,10 +406,26 @@ h3{
   padding-top:calc(var(--header-height) + var(--space-2xs));
 }
 
+/* Warm bronze-black replaces the old neutral anthracite tint so the existing
+   wood tones and spotlight highlights in the photo read as golden dusk
+   rather than being grayed down — the darkening needed for text contrast
+   comes from the alpha ramp, the hue shift is what adds the "gold" cast. */
 .hero__scrim{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(36,39,43,.05), rgba(36,39,43,.5));
+  background:linear-gradient(180deg, rgba(58,38,14,.10), rgba(32,20,8,.62));
+}
+
+/* Soft gold bloom over the wall-lamp highlights (upper-left of the photo),
+   blended so it amplifies the light already in the shot instead of tinting
+   the whole frame flat. Sits under .hero__scrim so the bottom text-legibility
+   darkening still wins near the headline. */
+.hero__glow{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(60% 55% at 20% 8%, rgba(230,184,90,.55), transparent 70%);
+  mix-blend-mode:soft-light;
+  pointer-events:none;
 }
 
 .hero__content{
@@ -419,6 +435,29 @@ h3{
   margin-left:max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
   padding:var(--space-2xl) 0 var(--space-2xl);
 }
+
+/* Gold paint-swatch marker, hero-only variant of .section-marker used
+   elsewhere on the page — same chip shape, warmer metallic hues, so the
+   "premium" cue reads as this site's existing motif rather than a bolted-on
+   luxury cliché. */
+.hero__marker{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:var(--space-sm);
+  animation:hero-meteor .95s both;
+}
+.hero__marker-chip{
+  width:22px;
+  height:8px;
+  border-radius:2px;
+  display:inline-block;
+}
+.hero__marker-chip:nth-child(2){ transform:translateY(2px); }
+.hero__marker-chip:nth-child(3){ transform:translateY(-1px); }
+.hero__marker-chip--1{ background:#8A6A2A; }
+.hero__marker-chip--2{ background:#D9B45B; }
+.hero__marker-chip--3{ background:#F0D48A; }
 
 .hero__title{
   font-family:var(--font-heading);
@@ -483,6 +522,15 @@ h3{
   color:var(--accent-fg);
 }
 
+/* Thin gold ring on the hero's primary CTA only — a premium touch on the
+   button the client actually looks at, not a global button restyle. */
+.hero__actions .btn--primary{
+  box-shadow:var(--shadow-sm), 0 0 0 1px rgba(217,180,91,.55);
+}
+.hero__actions .btn--primary:hover{
+  box-shadow:var(--shadow-sm), 0 0 0 1px rgba(240,212,138,.8), 0 6px 20px -6px rgba(154,116,42,.55);
+}
+
 .hero__stats{
   position:relative;
   z-index:2;
@@ -513,6 +561,12 @@ h3{
   font-weight:700;
   font-size:1.6rem;
   color:var(--primary-dark);
+}
+
+/* Hero stats card only — gold numerals to match the hero's premium accent,
+   the rest of the card (label, background) stays on the neutral palette. */
+.hero__stats .stat-strip__num{
+  color:#A9812F;
 }
 
 .stat-strip__label{
