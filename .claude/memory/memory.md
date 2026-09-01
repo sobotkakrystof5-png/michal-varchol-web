@@ -533,6 +533,8 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 **Nové/změněné mezery (vědomě neřešeno):**
 - Změna zatím jen lokálně v pracovním stromu, needeployná na produkci — `index.md` "Aktuální stav" teď musí rozlišovat "co běží na produkci" (`bb23b25`) od "co je rozpracované lokálně" (tato session).
 
+**Nasazení:** uživatel následně požádal "push this project on github and deploy it on vercel to the production". Commitnuto jako `946ba17`, pushnuto na `origin/main`. Vercel git-integrace spustila auto-deploy, ověřeno přes Vercel MCP (`list_deployments`) jako `dpl_3fhSbBfnkbvHomgScKiVJGa8QX5T`, `state: READY`, `target: production`. Ověřeno i přímo na živé URL (`curl https://michal-varchol-web.vercel.app/` obsahuje `hero__marker`/`hero__glow`).
+
 **Dotčené soubory:**
 - `assets/css/style.css` (`.hero__scrim`, nový `.hero__glow`, nový `.hero__marker`/`.hero__marker-chip`, `.hero__actions .btn--primary` box-shadow, `.hero__stats .stat-strip__num`)
 - `index.html` (nový `<div class="hero__glow">` a `.hero__marker` se třemi chipy uvnitř `.hero__content`)
