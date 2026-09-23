@@ -413,7 +413,10 @@ h3{
 .hero__scrim{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(58,38,14,.10), rgba(32,20,8,.62));
+  /* Lighter on mobile/tablet — the darker warm value below is restored
+     for desktop only (>=1025px), where the taller hero has more room
+     and the client feedback about a too-dark photo was mobile-first. */
+  background:linear-gradient(180deg, rgba(58,38,14,.06), rgba(32,20,8,.44));
 }
 
 /* Soft gold bloom over the wall-lamp highlights (upper-left of the photo),
@@ -623,6 +626,10 @@ h3{
   aspect-ratio:3/4;
 }
 
+.photo-placeholder--leseni{
+  aspect-ratio:3/2;
+}
+
 /* Filled variant — holds a real <img> instead of the empty-state icon+caption.
    Reuses the same aspect-ratio/tape rules above, just swaps the dashed
    "waiting for a photo" look for a solid frame around the actual photo. */
@@ -695,6 +702,10 @@ h3{
 .section--kontakt{
   padding-top:var(--space-2xl);
   padding-bottom:var(--space-xl);
+}
+
+.section--leseni{
+  padding-block:var(--space-xl);
 }
 
 /* -------------------------------------------------------------------------
@@ -1205,6 +1216,56 @@ h3{
 }
 
 /* -------------------------------------------------------------------------
+   11b. Půjčovna lešení
+   ------------------------------------------------------------------------- */
+.leseni-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  align-items:center;
+  gap:var(--space-lg);
+}
+
+.leseni-text p + p{
+  margin-top:var(--space-sm);
+}
+
+.leseni-list{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-2xs);
+  margin-top:var(--space-md);
+}
+
+.leseni-list li{
+  position:relative;
+  padding-left:var(--space-md);
+  color:var(--fg);
+}
+.leseni-list li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.6em;
+  width:8px;
+  height:8px;
+  border-radius:2px;
+  background:var(--accent-2);
+}
+
+.leseni-price{
+  margin-top:var(--space-sm);
+  font-size:.92rem;
+  color:var(--muted);
+}
+
+.leseni-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--space-xs);
+  margin-top:var(--space-lg);
+}
+
+/* -------------------------------------------------------------------------
    12. Kontakt + form
    ------------------------------------------------------------------------- */
 .kontakt-grid{
@@ -1529,6 +1590,8 @@ h3{
   .category-modal__grid{ grid-template-columns:repeat(3, 1fr); }
 
   .site-footer__grid{ grid-template-columns:1.2fr 1fr 1fr; }
+
+  .leseni-grid{ grid-template-columns:1fr 1fr; }
 }
 
 /* --- Desktop nav (>= 900px): off-canvas becomes a static inline nav --- */
@@ -1558,15 +1621,18 @@ h3{
     flex-direction:row;
     align-items:center;
     /* Pevný gap místo space-between drží odkazy rovnoměrně, ale blízko
-       u sebe, ať se nerozprostírají přes celou šířku headeru. */
-    gap:var(--space-lg);
+       u sebe, ať se nerozprostírají přes celou šířku headeru. Menší gap než
+       na velkém desktopu — se 6 odkazy (po přidání "Lešení") by --space-lg
+       na 900–1024px přetékalo mimo viewport, viz zúžení zpět na --space-lg
+       až v breakpointu 1025px níže. */
+    gap:var(--space-md);
   }
   .primary-nav__link{
     font-size:.95rem;
   }
   .primary-nav__cta-group{
     margin-top:0;
-    margin-left:var(--space-xl);
+    margin-left:var(--space-lg);
     width:auto;
   }
 }
@@ -1575,8 +1641,19 @@ h3{
 @media (min-width:1025px){
   .hero{ min-height:88vh; }
 
+  .hero__scrim{
+    background:linear-gradient(180deg, rgba(58,38,14,.10), rgba(32,20,8,.62));
+  }
+
   .photo-placeholder--hero{
     aspect-ratio:21/9;
+  }
+
+  .primary-nav__list{
+    gap:var(--space-lg);
+  }
+  .primary-nav__cta-group{
+    margin-left:var(--space-xl);
   }
 
   .o-nas__grid{ grid-template-columns:1.3fr 1fr; }

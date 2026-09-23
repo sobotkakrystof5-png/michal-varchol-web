@@ -542,3 +542,61 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
 
 ---
+
+## 2026-09-23 — Nová sekce "Půjčovna lešení" v navbaru
+
+**Fáze projektu po této session:** Produkce stále běží na `946ba17`/`dpl_3fhSbBfnkbvHomgScKiVJGa8QX5T` — tato session přidala novou sekci do lokálního kódu, **necommitnuto ani nenasazeno**. Klient (Michal Varchol) požádal přes uživatele o přidání stručné nabídky pronájmu lešení, poslal krátký text a jednu produktovou fotku lešení Pletac PD 70.
+
+**Co bylo uděláno:**
+- Zkopírována klientem dodaná fotka `Fotky/Lešení /leseni.webp` (750×466, rámové lešení Pletac PD 70 s plošinami a schodištěm) do `assets/img/leseni.webp`.
+- Přidán nový odkaz "Lešení" do desktopového i mobilního (hamburger) menu a "Půjčovna lešení" do patičky, všechny cílí na nové `#pujcovna-leseni`. Aktivní-link tracking (IntersectionObserver v `main.js`) je generický přes `main section[id]` + `[data-nav-link]`, takže nevyžadoval žádnou JS změnu.
+- Přidána nová sekce `section--leseni` mezi Reference a Kontakt: foto vlevo (landscape 3:2, nový `.photo-placeholder--leseni`), vpravo krátký text (1 věta) + 4 odrážky z klientova zadání + cenová poznámka ("Cena dle množství lešení a délky pronájmu.") + dvě CTA tlačítka (Poptat pronájem → `#kontakt`, Zavolat → `tel:`). Sekce má `section--alt` pozadí pro vizuální oddělení od sousedních sekcí (stejný vzor jako `section--sluzby`).
+- Nové CSS třídy: `.leseni-grid`, `.leseni-media`, `.leseni-text`, `.leseni-list` (+ `::before` čtvercová odrážka v `--accent-2`), `.leseni-price`, `.leseni-actions`, `.photo-placeholder--leseni`, `.section--leseni`. Mobile-first, 2-sloupcový grid od 800px (sdílí breakpoint s ostatními tablet grid změnami).
+
+**Rozhodnutí a proč:**
+- V navu použit krátký label "Lešení" místo plného "Půjčovna lešení" — přidání 6. odkazu do existujícího `.primary-nav__list` (gap `--space-lg`=40px) způsobovalo při ověření v Playwright headless Chrome **horizontální přetečení hlavičky o 28px na šířce 900px** (přesně na hranici, kde se mobilní hamburger mění na desktopový nav). Kratší label sám o sobě přetečení neřešil dostatečně, proto navíc zúžen gap navu a odsazení CTA skupiny na rozsahu 900–1024px (`--space-md`/`--space-lg` místo `--space-lg`/`--space-xl`) a původní širší mezery obnoveny až od 1025px, kde už je místa dost. Ověřeno Playwright na šířkách 360/375/500/768/880/900/920/950/1000/1024/1280/1440 — 0px přetečení všude kromě preexistujícího 14px na 360px (viz níže, nesouvisí s touto změnou).
+- Sekce umístěna mezi Reference a Kontakt (ne mezi Služby a Galerie) — jde o vedlejší nabídku (pronájem vybavení), ne o hlavní malířskou službu, takže nemá ředit hlavní `Služby` blok; zároveň logicky navazuje před kontaktní formulář, kam vede i její CTA.
+- Obsah držen záměrně krátký podle explicitního zadání uživatele ("chci to pojmout velmi stručně") — jedna úvodní věta + 4 odrážky přímo z dodaného textu + cenová poznámka, žádné rozšiřující odstavce jako u sekce "O mně".
+
+**Zjištěno, needitováno (mimo scope):** Při ověřování objeven **preexistující** layout bug nezávislý na této změně — `.primary-nav__link` nemá `white-space:nowrap`, takže odkaz "O mně" se zalamuje na dva řádky v celém rozsahu cca 900–1000px šířky (ověřeno i na necommitnuté verzi před touto session, tedy i s původními 5 odkazy). Nejde o regresi způsobenou přidáním "Lešení" — na 900px byl původní stav ve skutečnosti o něco horší (zalamoval se i celý wordmark "Michal Varchol"). Neopravováno, je mimo scope zadání.
+
+**Nové/změněné mezery (vědomě neřešeno):**
+- Nová sekce zatím necommitnutá a nenasazená na produkci.
+- Fotka `leseni.webp` je produktová/technická ilustrace dodaná klientem (ne fotka z jeho vlastní zakázky) — použita přímo podle klientova zadání, bez placeholderu.
+- Nově objevený preexistující bug: zalamování "O mně" v navu na šířkách ~900–1000px (viz výše) — nepřidáno do staršího seznamu mezer v `index.md`, ale zmíněno zde pro budoucí session.
+
+**Dotčené soubory:**
+- `assets/img/leseni.webp` (nový, zkopírováno z `Fotky/Lešení /leseni.webp`)
+- `index.html` (nový nav odkaz v headeru i patičce, nová sekce `#pujcovna-leseni`)
+- `assets/css/style.css` (nové třídy `.leseni-*`, `.photo-placeholder--leseni`, `.section--leseni`; upravený gap/margin desktopového navu na 900–1024px a jeho obnovení od 1025px)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
+
+---
+
+## 2026-09-23 — Zesvětlení hero fota jen na mobilu/tabletu (desktop beze změny)
+
+**Fáze projektu po této session:** Produkce (**https://michal-varchol-web.vercel.app**, poslední nasazený commit `946ba17`) zatím NEODPOVÍDÁ pracovnímu stromu — tato session je čistě lokální/needeploynutá. Pracovní strom navíc už před touto session obsahoval necommitnuté rozpracované změny nesouvisející s hero sekcí (nová sekce "Půjčovna lešení" v `index.html`/`style.css`) — této session se netýkají, nebyly upravovány ani commitovány.
+
+**Co bylo uděláno:**
+- Uživatel požádal o zesvětlení hero fotky konkrétně na mobilu a tabletu, s tím že na počítači (desktop) má zůstat beze změny (zpráva byla částečně překlepová/nedopsaná, ale interpretace "hlavně tyto dva [mobil/tablet]" + zmínka "počítačové" na konci odpovídá čtení "ne na desktopu" — pokud je to špatně, snadno se to otočí).
+- Zdroj tmavosti je stále stejný jako v předchozích hero úpravách (2026-08-30, 2026-09-01) — `.hero__scrim` gradient v `assets/css/style.css` (~L413), žádný filtr na `<img>`.
+- Základní (mobile-first) pravidlo `.hero__scrim` zesvětleno z `rgba(58,38,14,.10)/rgba(32,20,8,.62)` na `rgba(58,38,14,.06)/rgba(32,20,8,.44)`. Uvnitř `@media (min-width:1025px)` bloku (desktop layout) přidán override, který vrací přesně předchozí (tmavší) hodnoty `.10/.62` — takže desktop vypadá stejně jako předtím, mobil (výchozí, <800px) i tablet (800–1024px, žádný mezikrok pro `.hero__scrim` mezi nimi neexistuje) dostávají světlejší verzi.
+- Ověřeno headless Playwright screenshoty hero sekce na 390px (mobil), 834px (tablet) a 1440px (desktop) šířky — foto na mobilu/tabletu viditelně světlejší, desktop identický s předchozím stavem, bez console chyb na žádné šířce, text (H1/subtitle/CTA) zůstává čitelný i po zesvětlení.
+
+**Rozhodnutí a proč:**
+- Zvoleno řešení přes breakpoint-scoped override místo jednotné globální změny, protože zadání explicitně rozlišovalo mobil/tablet od desktopu — dosavadní hero scrim úpravy (2026-08-30, 2026-09-01) byly vždy jednotné pro celou stránku, tohle je první breakpoint-specifická úprava tohoto overlaye.
+- Bottom alfa snížena na `.44` (mezi historickým `.5` z 2026-08-30 a aktuálním `.62` z 2026-09-01) — kompromis mezi viditelně světlejším dojmem a zachováním kontrastu bílého textu, který na scrimu závisí; nejde o přesný WCAG výpočet, jen vizuální odhad ověřený screenshotem.
+- Nezasahováno do `.hero__glow` (zlatý bloom) ani do zlatých UI detailů (marker, stat čísla, CTA ring) přidaných 2026-09-01 — zadání se týkalo jen tmavosti fotky, ne zlatého akcentu.
+
+**Otevřené otázky (čeká na klienta/uživatele):**
+- Zbytek dříve otevřených otázek beze změny (schválení antracit+teak palety + zlatého hero akcentu, rok založení, logo, DIČ, doména, `RESEND_API_KEY` na Vercelu).
+- Uživatel zatím nepožádal o commit/push/deploy této změny.
+- Nepotvrzeno, že interpretace "mobil/tablet ano, desktop ne" z nedopsané zprávy je přesně to, co uživatel chtěl — stačí prohodit hodnoty mezi základním pravidlem a `1025px` overridem, kdyby to bylo naopak.
+
+**Dotčené soubory:**
+- `assets/css/style.css` (`.hero__scrim` — základní hodnota + nový override v `@media (min-width:1025px)`)
+- `.claude/memory/memory.md` (tento záznam)
+- `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
+
+---
