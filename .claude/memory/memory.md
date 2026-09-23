@@ -600,3 +600,18 @@ Nevyplněné sekce (např. žádná nová rozhodnutí) klidně vynech, ale nepi�
 - `.claude/memory/index.md` (aktualizován blok "Aktuální stav")
 
 ---
+
+## 2026-09-23 — Push lešení sekce a mobilního hero scrimu na produkci
+
+**Fáze projektu po této session:** Produkce odpovídá `main` (`47a24b1`).
+
+**Co bylo uděláno:**
+- Uživatel požádal "push celý projekt a veškeré branches na github". Repo má jedinou větev `main` (žádné další lokální ani remote větve, žádné tagy).
+- Commitnuty všechny necommitnuté změny: sekce "Půjčovna lešení" (`index.html`, `assets/css/style.css`, `assets/img/leseni.webp`), zesvětlení `.hero__scrim` pod 1025px, záznamy v paměti a `.vscode/settings.json` (jen port Live Serveru, nic citlivého) → `47a24b1`.
+- `git push --all origin` + `git push --tags origin`. Push spustil Vercel git auto-deploy, na https://michal-varchol-web.vercel.app ověřeno, že HTML obsahuje `#pujcovna-leseni` a `assets/img/leseni.webp` vrací 200.
+
+**Otevřené otázky:** beze změny (schválení palety/zlatého hero akcentu, `RESEND_API_KEY`, rok založení, logo, DIČ, doména, preexistující zalamování "O mně" v navu na ~900–1000px).
+
+**Dotčené soubory:** `.claude/memory/memory.md`, `.claude/memory/index.md` (kódové soubory viz commit `47a24b1`).
+
+---
